@@ -1,3 +1,4 @@
+
 # angular-gantt [![npm version](http://img.shields.io/npm/v/angular-gantt.svg)](https://npmjs.org/package/angular-gantt) [![build status](http://img.shields.io/travis/angular-gantt/angular-gantt.svg)](https://travis-ci.org/angular-gantt/angular-gantt)
 
 ##Gantt chart component for AngularJS
@@ -20,12 +21,12 @@ To build execute `grunt`. This will execute tests, and then produce a dist folde
 
 To run the demo application, execute `grunt serve`. This will start a web server and open your browser on the demo application.
 
-To use local sources of [angular-gantt](https://github.com/angular-gantt/angular-gantt), you can use 
+To use local sources of [angular-gantt](https://github.com/angular-gantt/angular-gantt), you can use
 [bower link](http://bower.io/docs/api/#link). From cloned repository, execute following commands.
 
-    
+
     $ bower link
-    
+
     $ cd demo
     $ bower link angular-gantt
 
@@ -50,3 +51,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+=======
