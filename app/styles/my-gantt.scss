@@ -1,0 +1,116 @@
+$light-grey: #f2f2f2;
+.dropdown-menu {
+  position: fixed;
+    z-index: 1060;
+
+}
+.color-picker-wrapper{
+  position: fixed;
+  height: 40px;
+  .color-picker-input-wrapper{
+    height: 100%;
+  }
+}
+.edit-panel-box {
+    height: 200px;
+    width: 100%;
+}
+
+
+.aside {
+    position: fixed;
+    z-index: 1049;
+    overflow: hidden;
+    min-width: 320px;
+    width: 100%;
+    min-height: 230px;
+    height: 25%;
+    max-height: 250px;
+    background: white;
+    .edit-panel-wrapper {
+        position: relative;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        height: 100%;
+        .col-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            min-width: 250px;
+            &.option-block{
+              float:left;
+            }
+            &.button-block{
+              overflow:hidden;
+              width:auto;
+            }
+            &.big{
+              width: 500px;
+            }
+            height: 100%;
+            .col-header {
+
+                background-color: #888;
+                color: #fff;
+                width: 100%;
+                height: 22px;
+                margin: 0px 0px 4px 0px;
+                padding-left: 8px;
+                font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+                font-size: 14px;
+
+                line-height: 24px;
+                max-width: none;
+                overflow: hidden;
+                box-shadow: 0 1px 1px #999;
+            }
+            .col-field-wrapper {
+              display: flex;
+              flex-direction: row;
+                padding:5px 5px 0px 10px;
+                width: 100%;
+                .form-group{
+
+                  margin-right: 5px;
+                  .color-wrapper{
+                    display: flex;
+                    flex-direction: row;
+                    overflow: hidden;
+                    justify-content: flex-start;
+                    align-items: flex-start;
+                    width: 100%;
+                      .sample-color{
+                        display: flex;
+                        flex-direction: row;
+                        overflow: hidden;
+                        justify-content: flex-start;
+                        align-items: flex-start;
+                        flex-wrap: wrap;
+
+                        .color-slot{
+                          width: 20px;
+                          height: 20px;
+                          border: 1px solid black;
+                        }
+                      }
+                      .custom-color{
+                        padding: 1px;
+                      }
+                  }
+                  .btn{
+                    border-radius:0px;
+                    height:28px;
+                    width:100px;
+                    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+                  }
+                }
+
+
+
+            }
+        }
+    }
+}

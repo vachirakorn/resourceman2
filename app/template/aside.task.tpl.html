@@ -1,0 +1,179 @@
+<div class="aside" tabindex="-1" role="dialog" ng-clock>
+    <div class="edit-panel-wrapper">
+        <div class="col-wrapper option-block">
+            <div class="col-header" style="background-color: {{task.model.color}};">
+                TASK
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>LABEL</label>
+                    <input type="text" class="form-control" ng-model="task.model.name">
+                </div>
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>PROJECT</label>
+                    <input type="text" class="form-control" ng-model="task.model.project">
+                </div>
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group" style="width:160px;">
+                    <label class="control-label">COLOR</label>
+                    <div class="color-wrapper">
+                        <div class="sample-color" style="width:100px;">
+                            <div class="color-slot" ng-click="sampleColorsPicker.setSampleColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors"></div>
+                        </div>
+                        <div class="custom-color">
+                            <color-picker ng-model="color" color-picker-disabled="colorpicker.disabled" color-picker-format="colorpicker.format" color-picker-alpha="colorpicker.alpha" color-picker-swatch="colorpicker.swatch" color-picker-swatch-pos="colorpicker.swatchPos" color-picker-swatch-bootstrap="colorpicker.swatchBootstrap"
+                                color-picker-pos="colorpicker.pos" color-picker-case="colorpicker.case" color-picker-swatch-only="colorpicker.swatchOnly" color-picker-inline="colorpicker.inline" color-picker-on-change="colorpicker.onColorChange($event,color)"></color-picker>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-wrapper option-block big" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);">
+            <div class="col-header" style="background-color: {{task.model.color}};">
+                TIMING
+            </div>
+            <div class="col-field-wrapper">
+
+
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> START</label>
+                    </br>
+                    <input type="text" class="form-control" ng-model="task.model.from" max-date="{{options.toDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="From" bs-datepicker>
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-clock-o"></i> </label>
+                    </br>
+                    <input type="text" size="8" class="form-control" ng-model="sharedDate" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><i class="fa fa-calendar"></i> END</label>
+                    </br>
+                    <input type="text" class="form-control" ng-model="task.model.to" min-date="{{options.fromDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To" bs-datepicker>
+                </div>
+                <div class="form-group" id="datetime1">
+                    <label class="control-label"><i class="fa fa-clock-o"></i> </label>
+                    </br>
+                    <input type="text" size="8" class="form-control" ng-model="sharedDate" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
+                </div>
+
+
+            </div>
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>RESOURCE GROUP</label></br>
+                    <select ui-select2 ng-model="group" data-placeholder="select" style="width:100px;">
+                        <option value=""></option>
+                        <option value="people">People</option>
+                        <option value="tools">Tools</option>
+                        <option value="vehicles">Vehicles</option>
+                    </select>
+                </div>
+            </div> -->
+
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>SKILLSET</label></br>
+                    <select ui-select2 ng-model="skillset"  data-placeholder="select" style="width:100px;">
+                        <option value=""></option>
+                        <option value="1"></option>
+                        <option value="2">Marketing</option>
+                        <option value="3"></option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-wrapper option-block big">
+            <div class="col-header" style="background-color: {{task.model.color}};">
+                CUSTOM DATA FIELDS
+            </div>
+
+            <div class="col-field-wrapper">
+                <div class="form-group" >
+                    <label>PRIORITY</label><br>
+                    <button type="button" class="btn btn-default" ng-model="task.model.priority" data-html="1" data-toggle="true" bs-options="priority.value as priority.label for priority in priorities" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+
+                </div>
+                <div class="form-group">
+                    <label>TYPE</label><br>
+                    <button  type="button" class="btn btn-default" ng-model="task.model.type" data-html="1" data-toggle="true" bs-options="type.value as type.label for type in types" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+
+                </div>
+
+            </div>
+            <div class="col-field-wrapper">
+              <div class="form-group">
+                  <label>SUPERVISOR</label>
+                  <input type="text" class="form-control" ng-model="task.model.supervisor">
+              </div>
+                <div class="form-group">
+                    <label>MARKETING</label>
+                    <input type="text" class="form-control" ng-model="task.model.marketing">
+                </div>
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>MANDAY</label>
+                    <input type="text" class="form-control" ng-model="task.model.manday">
+                </div>
+            </div>
+
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>PRIORITY</label>
+                    </br>
+                    <select ui-select2 ng-model="task.model.priority" data-placeholder="task.model.priority" style="width:100px;">
+                        <option value="frontend">Critical</option>
+                        <option value="backend">High</option>
+                        <option value="frontend">Medium</option>
+                        <option value="frontend">Low</option>
+
+
+                    </select>
+                </div>
+            </div> -->
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>PROGRESS</label>
+                    <input type="text" class="form-control" ng-model="task.model.progress">
+                </div>
+            </div> -->
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>TEAM</label>
+                    </br>
+                    <select ui-select2 ng-model="skillset" data-placeholder="select" style="width:100px;">
+                        <option value=""></option>
+                        <option value="backend">Backend</option>
+                        <option value="frontend">Frontend</option>
+
+                    </select>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-wrapper button-block" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);width:22%;">
+            <!-- bug row span-->
+            <div class="col-header" style="background-color: {{task.model.color}};">
+
+            </div>
+            <div class="col-field-wrapper">
+                <div class="btn-group-vertical" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="taskSave();$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(row.model.id,task.model.id);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="$hide()" bs-checkbox>Cancel</button>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

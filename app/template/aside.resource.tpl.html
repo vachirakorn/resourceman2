@@ -1,0 +1,66 @@
+<div class="aside" tabindex="-1" role="dialog" ng-clock>
+    <div class="edit-panel-wrapper">
+        <div class="col-wrapper" style="width: 25%;">
+            <div class="col-header" style="background-color: {{headerColor}};">
+                RESOURCE
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>LABEL</label>
+                    <input type="text" class="form-control" ng-model="row.model.name" >
+                </div>
+            </div>
+        </div>
+        <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width: 25%;">
+            <div class="col-header" style="background-color: {{headerColor}};">
+                CUSTOM DATA FIELDS
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>TEL</label>
+                    <input type="text" class="form-control" ng-model="row.model.tel">
+                </div>
+            </div>
+            <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>EMAIL</label>
+                    <input type="text" class="form-control" ng-model="row.model.email">
+                </div>
+            </div>
+            <!-- <div class="col-field-wrapper">
+              <div class="form-group" >
+                  <label>SAMPLE</label><br>
+                  <button type="button" class="btn btn-default" ng-model="task.model.priority" data-html="1" data-toggle="true" bs-options="priority.value as priority.label for priority in priorities" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+
+              </div>
+            </div> -->
+
+            <!-- <div class="col-field-wrapper">
+                <div class="form-group">
+                    <label>SKILLSET</label></br>
+                    <select ui-select2 ng-model="skillset"  data-placeholder="select" style="width:100px;">
+                        <option value=""></option>
+                        <option value="1"></option>
+                        <option value="2">Marketing</option>
+                        <option value="3"></option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width:50%;">
+            <div class="col-header" style="background-color: {{headerColor}};">
+
+            </div>
+            <div class="col-field-wrapper">
+                <div class="btn-group-vertical" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(row.model.id)" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="$hide()" bs-checkbox>Cancel</button>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

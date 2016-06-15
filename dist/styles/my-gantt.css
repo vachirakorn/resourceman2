@@ -1,0 +1,24 @@
+.edit-panel-box {
+  height: 200px;
+  width: 100%; }
+
+.edit-panel {
+  position: fixed;
+  width: 100%;
+  height: 200px;
+  bottom: 0%;
+  background-color: red; }
+  .edit-panel .col1 {
+    width: 33.3%;
+    height: 100%;
+    background-color: tomato; }
+  .edit-panel .col2 {
+    width: 33.3%;
+    height: 100%;
+    background-color: red; }
+  .edit-panel .col3 {
+    width: 33.3%;
+    height: 100%;
+    background-color: green; }
+
+/*# sourceMappingURL=my-gantt.css.map */
