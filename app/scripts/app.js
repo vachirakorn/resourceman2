@@ -33,4 +33,5 @@ angular.module('angularGanttDemoApp', [
               animation: 'am-slide-bottom',
               placement: 'bottom'
             });
+
 }]);

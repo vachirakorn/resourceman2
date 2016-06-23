@@ -36,10 +36,9 @@ module.exports = function(config) {
       'bower_components/css-element-queries/src/ElementQueries.js',
       'bower_components/css-element-queries/src/ResizeSensor.js',
       'bower_components/jsPlumb/dist/js/jsPlumb-2.0.7.js',
-      'bower_components/select2/select2.js',
-      'bower_components/angular-ui-select2/src/select2.js',
       'bower_components/tinycolor/tinycolor.js',
       'bower_components/angular-color-picker/dist/angularjs-color-picker.js',
+      'bower_components/angular-post-fix/postfix.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

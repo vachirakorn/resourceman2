@@ -81,6 +81,10 @@ module.exports = function (grunt) {
             return [
               serveStatic('.tmp'),
               connect().use(
+                '/app',
+                serveStatic('<%= yeoman.app %>')
+              ),
+              connect().use(
                 '/bower_components',
                 serveStatic('bower_components')
               ),
