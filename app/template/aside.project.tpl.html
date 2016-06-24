@@ -34,6 +34,14 @@
                 CUSTOM DATA FIELDS
             </div>
             <div class="col-field-wrapper">
+                <div class="form-group" >
+                    <label>PRIORITY</label><br>
+                    <button type="button" class="btn btn-default" ng-model="asideProjectRow.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+
+                </div>
+
+            </div>
+            <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>BUDGET.฿</label>
                     <input type="text" class="form-control" ng-model="asideProjectRow.budget">
@@ -74,7 +82,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="projectSave(asideProjectRow);$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="projectDelete(asideProjectRow.id);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel();$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>

@@ -2,18 +2,18 @@
     <div class="edit-panel-wrapper">
         <div class="col-wrapper option-block">
             <div class="col-header" style="background-color: {{asideTask.color}};">
-                TASK
+                {{asideRow.height===undefined?'TASK':'PLAN'}}
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideTask.name">
+                    <input type="text" class="form-control" ng-model="asideTask.name" >
                 </div>
             </div>
-            <div class="col-field-wrapper">
+            <div class="col-field-wrapper" ng-if="asideRow.height===undefined">
                 <div class="form-group">
                     <label>PROJECT</label>
-                    <input type="text" class="form-control" ng-model="asideTask.project">
+                    <input type="text" class="form-control" ng-model="asideTask.project" >
                 </div>
             </div>
             <div class="col-field-wrapper">
@@ -177,7 +177,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="taskSave(asideRow.rid,asideRow.tasks);$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(row.id,asideTask.id);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel();$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>

@@ -9,11 +9,12 @@
  */
 angular.module('angularGanttDemoApp')
     .controller('MainCtrl', ['$scope', '$timeout', '$http', '$log', 'ganttUtils', 'GanttObjectModel', 'Sample', 'ganttMouseOffset', 'ganttDebounce', 'moment', '$modal', '$aside', function($scope, $timeout, $http, $log, utils, ObjectModel, Sample, mouseOffset, debounce, moment, $modal, $aside) {
-
+        $scope.taskCache = {};
+        $scope.rowCache = {};
+        $scope.projectCache = {};
         var objectModel;
         var dataToRemove;
         var dataCache = [];
-        var taskCache;
         var isAsideOpened;
         var taskAside = $aside({
             scope: $scope,
@@ -106,12 +107,13 @@ angular.module('angularGanttDemoApp')
             width: true,
             zoom: 1,
             columns: ['model.name', 'model.utilization'],
-            treeTableColumns: ['from', 'to'],
+            treeTableColumns: ['model.priorityLevel', 'from', 'to'],
             columnsHeaders: {
                 'model.name': 'Name',
                 'from': 'From',
                 'to': 'To',
-                'model.utilization': 'Utilization'
+                'model.utilization': 'Utilization',
+                'model.priorityLevel': 'Priority'
             },
             columnsClasses: {
                 'model.name': 'gantt-column-name',
@@ -128,6 +130,11 @@ angular.module('angularGanttDemoApp')
                 },
                 'model.utilization': function(utilization) {
                     return utilization + '%';
+                },
+                'model.priorityLevel': function(priorityLevel) {
+                    //capitalize the first letter
+                    return (!!priorityLevel) ? priorityLevel.charAt(0).toUpperCase() + priorityLevel.substr(1).toLowerCase() : '';
+
                 }
             },
             treeHeaderContent: '<i class="fa fa-align-justify"></i> {{getHeader()}}',
@@ -144,7 +151,7 @@ angular.module('angularGanttDemoApp')
             rowContentEnabled: true,
             taskContentEnabled: true,
             rowContent: '<i class="fa fa-user"></i> {{row.model.name}}',
-            taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation\':\'a\'}}' + '\"></i> {{task.model.name}} | {{task.model.project}}',
+            taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
             allowSideResizing: true,
             labelsEnabled: true,
             currentDate: 'column',
@@ -157,18 +164,18 @@ angular.module('angularGanttDemoApp')
             filterRow: '',
             timeFrames: {
                 'day': {
-                    start: moment('9:00', 'HH:mm'),
-                    end: moment('17:30', 'HH:mm'),
+                    start: moment('0:00', 'HH:mm'),
+                    end: moment('23:59', 'HH:mm'),
                     color: '#ACFFA3',
                     working: true,
                     default: true
                 },
-                'noon': {
-                    start: moment('12:30', 'HH:mm'),
-                    end: moment('13:30', 'HH:mm'),
-                    working: false,
-                    default: true
-                },
+                // 'noon': {
+                //     start: moment('12:30', 'HH:mm'),
+                //     end: moment('13:30', 'HH:mm'),
+                //     working: false,
+                //     default: true
+                // },
                 'closed': {
                     working: false,
                     default: true
@@ -268,7 +275,7 @@ angular.module('angularGanttDemoApp')
 
                     // When gantt is ready, load data.
                     // `data` attribute could have been used too.
-                    $scope.load();
+                    // $scope.load();
 
                     // Add some DOM events
                     // api.directives.on.new($scope, function(directiveName, directiveScope, element) {
@@ -312,58 +319,76 @@ angular.module('angularGanttDemoApp')
 
                     api.directives.on.new($scope, function(directiveName, directiveScope, element) {
                         //set colorpicker option
-
-
-
                         if (directiveName === 'ganttTask') {
                             element.bind('click', function(event) {
                                 event.stopPropagation();
                                 logTaskEvent('task-click', directiveScope.task);
+
+                                if (isAsideOpened) {
+                                    //auto save if user click other tasks
+                                    $scope.taskSave($scope.asideRow.rid, $scope.asideRow.tasks);
+                                    taskAside.hide();
+                                }
+                                //  $scope.taskCache = angular.copy(directiveScope.task.model);
+
                                 $scope.asideTask = directiveScope.task.model;
                                 $scope.asideRow = directiveScope.task.row.model;
-                                angular.copy($scope.data, dataCache);
-
 
                                 taskAside.$promise.then(function() {
+                                    isAsideOpened = true;
+                                    console.log("[LOG] task aside opened");
                                     taskAside.show();
                                 });
 
+                            });
+                            element.bind('mousedown touchstart', function() {
+                                event.stopPropagation();
+                                console.log("[LOG] copy task cache");
+                                $scope.taskCache = angular.copy(directiveScope.task.model);
                             });
 
 
                         } else if (directiveName === 'ganttRowLabel') {
                             element.unbind();
                             element.bind('click', function() {
+                                event.stopPropagation();
                                 logRowEvent('row-label-click', directiveScope.row);
-
                                 if (isAsideOpened) {
-                                    //if user click other rows while aside still opens then fire cancel() old ones
-                                    $scope.cancel();
+                                    //auto save if user click other rows
+                                    console.log("[LOG] old aside still opens");
+                                    console.log("[LOG] save old row");
+                                    $scope.rowSave($scope.asideRow);
+                                    resourceAside.hide();
                                     projectAside.hide();
 
                                 }
-                                angular.copy($scope.data, dataCache);
-                                $scope.$digest();
-                                console.log("copy");
 
                                 if (directiveScope.row.model.height === undefined) {
+
                                     $scope.asideRow = directiveScope.row.model;
+                                    console.log("[LOG] bind new asideRow");
                                     resourceAside.$promise.then(function() {
                                         isAsideOpened = true;
-                                        console.log("aside opened");
+                                        console.log("[LOG] aside opened");
                                         resourceAside.show();
                                     });
                                 } else {
-                                  console.log("bind scope");
+                                    $scope.projectCache = angular.copy(directiveScope.row.model);
                                     $scope.asideProjectRow = directiveScope.row.model;
-
                                     projectAside.$promise.then(function() {
                                         isAsideOpened = true;
-                                        console.log("aside opened");
+                                        console.log("[LOG] project aside opened");
                                         projectAside.show();
+
                                     });
+
                                 }
 
+                            });
+                            element.bind('mousedown touchstart', function() {
+                                event.stopPropagation();
+                                console.log("[LOG] copy row cache");
+                                $scope.rowCache = angular.copy(directiveScope.row.model);
 
                             });
                         }
@@ -388,8 +413,9 @@ angular.module('angularGanttDemoApp')
             return $scope.data[$scope.data.length - 1].order;
 
         };
+
         $scope.addResource = function() {
-            angular.copy($scope.data, dataCache);
+            //  angular.copy($scope.data, dataCache);
             //add a new resource to the view
             $scope.data.push({
                 order: getLastOrder() + 1, //append to the bottom of resources list
@@ -410,7 +436,7 @@ angular.module('angularGanttDemoApp')
         };
 
         $scope.addProject = function() {
-            angular.copy($scope.data, dataCache);
+            //  angular.copy($scope.data, dataCache);
             $scope.data.push({
                 name: 'New Project',
                 height: '3em',
@@ -445,14 +471,14 @@ angular.module('angularGanttDemoApp')
                 }
 
             }).then(function mySuccess(response) {
-                console.log('success');
-                isAsideOpened = false;
+                console.log('[LOG] row successfully saved');
                 console.log(response);
             }, function myError(response) {
-                console.log('fail');
+                console.log('[LOG] fail to save the row');
                 $scope.cancel();
                 console.log(response);
             });
+            isAsideOpened = false;
 
         };
         $scope.projectSave = function(row) {
@@ -483,18 +509,22 @@ angular.module('angularGanttDemoApp')
         $scope.taskSave = function(rid, tasks) {
             // var i,j;
             //..db
-            // for (i = 0; i < $scope.data.length; i++) {
-            //     if ($scope.data[i].id === rowid) {
-            //         for (j = 0; j < $scope.data[i].tasks.length; j++) {
-            //             if ($scope.data[i].tasks[j].id === taskid) {
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
-            //  alert('i: '+i+' j: '+j);
+            if ($scope.options.projectView) {
+                console.log('FIND ROW WITH THE SAME ROWID');
+                var tasksTemp = [];
+                for (var i = 0; i < $scope.data.length; i++) {
+                    if ($scope.data[i].rid === rid) {
+                        for (var j = 0; j < $scope.data[i].tasks.length; j++) {
+                            tasksTemp.push($scope.data[i].tasks[j]);
+                        }
+                        console.log("FOUND!");
+                        console.log(JSON.stringify(tasksTemp) + "\n");
+                    }
+                }
+                tasks = tasksTemp;
+            }
 
-            console.log("sent: " + JSON.stringify(tasks));
+            console.log("send: " + JSON.stringify(tasks));
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
@@ -508,14 +538,14 @@ angular.module('angularGanttDemoApp')
                 }
 
             }).then(function mySuccess(response) {
-                console.log('success');
-                isAsideOpened = false;
+                console.log('[LOG] row successfully saved');
                 console.log(response);
             }, function myError(response) {
-                console.log('fail');
+                console.log('[LOG] fail to save the tasks');
                 $scope.cancel();
                 console.log(response);
             });
+            isAsideOpened = false;
 
             //$scope.reload();
         };
@@ -545,8 +575,16 @@ angular.module('angularGanttDemoApp')
         };
 
 
-        $scope.cancel = function() {
-            angular.copy(dataCache, $scope.data);
+        $scope.cancel = function(type) {
+            //angular.copy(dataCache, $scope.data); //copy back data
+            if (type === 'task') {
+                angular.copy($scope.taskCache, $scope.asideTask);
+            } else if (type === 'row') {
+                angular.copy($scope.rowCache, $scope.asideRow);
+            } else if (type === 'project') {
+                angular.copy($scope.projectCache, $scope.asideProjectRow);
+            }
+
             isAsideOpened = false;
             console.log("aside closed");
         };
@@ -570,6 +608,7 @@ angular.module('angularGanttDemoApp')
                     $scope.data = response.data;
 
 
+
                 }, function myError(response) {
                     console.log('fail');
                     console.log(response);
@@ -578,24 +617,24 @@ angular.module('angularGanttDemoApp')
                 // dataToRemove = undefined;
                 $scope.timespans = Sample.getSampleTimespans();
             } else {
-              $http({
-                  method: 'POST',
-                  url: 'scripts/controllers/dataLoader.jsp',
-                  params: {
-                      mode: 'projectLoad'
-                  },
-                  headers: {
-                      'Content-Type': 'application/json'
-                  }
-              }).then(function mySuccess(response) {
-                  console.log('success');
-                  $scope.data = response.data;
+                $http({
+                    method: 'POST',
+                    url: 'scripts/controllers/dataLoader.jsp',
+                    params: {
+                        mode: 'projectLoad'
+                    },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function mySuccess(response) {
+                    console.log('success');
+                    $scope.data = response.data;
 
 
-              }, function myError(response) {
-                  console.log('fail');
-                  console.log(response);
-              });
+                }, function myError(response) {
+                    console.log('fail');
+                    console.log(response);
+                });
 
 
                 $scope.timespans = Sample.getSampleTimespans();
@@ -603,17 +642,6 @@ angular.module('angularGanttDemoApp')
 
         };
 
-        $scope.$watch('options.projectView', function(projectView) {
-            if (projectView) {
-                $scope.options.sideMode = 'TreeTable';
-                //$scope.options.groupDisplayMode = 'disabled';
-            } else {
-                $scope.options.sideMode = 'Table';
-              //  $scope.options.groupDisplayMode = 'disabled';
-            }
-            $scope.load();
-
-        });
 
         $scope.reload = function() {
             $scope.load();
@@ -670,14 +698,7 @@ angular.module('angularGanttDemoApp')
             $scope.api.tree.collapseAll();
         };
 
-        $scope.$watch('options.sideMode', function(newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.api.side.setWidth(undefined);
-                $timeout(function() {
-                    $scope.api.columns.refresh();
-                });
-            }
-        });
+
 
         $scope.canAutoWidth = function(scale) {
             if (scale.match(/.*?hour.*?/) || scale.match(/.*?minute.*?/)) {
@@ -710,6 +731,33 @@ angular.module('angularGanttDemoApp')
             return 40 * zoom;
         };
 
+
+        $scope.$watch('options.sideMode', function(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                $scope.api.side.setWidth(undefined);
+                $timeout(function() {
+                    $scope.api.columns.refresh();
+                });
+            }
+        });
+
+        $scope.$watch('options.projectView', function(projectView) {
+            if (projectView) {
+                $scope.options.sideMode = 'TreeTable';
+                //$scope.options.groupDisplayMode = 'disabled';
+            } else {
+                $scope.options.sideMode = 'Table';
+                //  $scope.options.groupDisplayMode = 'disabled';
+            }
+            $scope.load();
+
+        });
+        $scope.$watchCollection('asideTask', function(newTasks, oldTasks) {
+            console.log("old: " + JSON.stringify(oldTasks));
+            console.log("new: " + JSON.stringify(newTasks));
+
+
+        });
 
 
         // Visual two way binding.
@@ -794,7 +842,9 @@ angular.module('angularGanttDemoApp')
         // });
 
         $scope.sampleColorsPicker = {
-            sampleColors: ['#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#3d566e', '#f1c40f', '#e67e22', '#e74c3c', '#e678b6', '#95a5a6'],
+            sampleColors: ['#1abc9c', '#49d049', '#3498db', '#9b59b6', '#3d566e',
+                '#f1c40f', '#e67e22', '#e74c3c', '#e678b6', '#95a5a6'
+            ],
             setTaskColor: function(color) {
                 $scope.asideTask.color = color;
             },
@@ -815,8 +865,13 @@ angular.module('angularGanttDemoApp')
             inline: false,
             onColorChange: function($event, color) {
                 console.log($event, $scope.asideTask.color, color);
-                $scope.asideTask.color = color;
-                $scope.asideProjectRow.color = color;
+                if ($scope.asideTask.color !== undefined) {
+                    $scope.asideTask.color = color;
+                } else if ($scope.asideProjectRow.color !== undefined) {
+                    $scope.asideProjectRow.color = color;
+                }
+
+
             }
         };
 

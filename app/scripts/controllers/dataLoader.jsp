@@ -12,7 +12,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 
 <%!
-
+//connecting db method (prevent crash from multiple mongoDB connections to Mongo)
 private static DB db = null;
 private static String dbname  = "resourceman";
 private static String host = "localhost";
@@ -25,6 +25,7 @@ private static DBCollection checkConnection(String collection) throws UnknownHos
     return db.getCollection(collection);
 }
  %>
+
 <%
 
 
@@ -74,8 +75,15 @@ private static DBCollection checkConnection(String collection) throws UnknownHos
 		update.append("$set", new BasicDBObject().append("tasks", JSON.parse(tasks)));
 		BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(resourceRowId));
 
-		resource.update(query, update);
-		project.update(query, update);
+		DBObject findRowID = project.findOne(query);
+		if(findRowID==null){
+			System.out.println("SAVE IN RESOURCE");
+			resource.update(query, update);
+		}else{
+			System.out.println("SAVE IN PROJECT");
+			project.update(query, update);
+		}
+
 
 	} else if (mode.equals("rowSave")) {
 
