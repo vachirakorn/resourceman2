@@ -11,9 +11,10 @@
                 </div>
             </div>
             <div class="col-field-wrapper" ng-if="asideRow.height===undefined">
-                <div class="form-group">
-                    <label>PROJECT</label>
-                    <input type="text" class="form-control" ng-model="asideTask.project" >
+                <div class="form-group" >
+                    <label>PROJECT</label><br>
+                    <button type="button" class="btn btn-default" ng-model="asideTask.project" data-html="1" data-toggle="true" bs-options="projectName.value as projectName.label for projectName in projectsName" data-placement="top-left" data-animation="" data-placeholder="     " bs-select></button>
+
                 </div>
             </div>
             <div class="col-field-wrapper">
@@ -175,8 +176,8 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="taskSave(asideRow.rid,asideRow.tasks);$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(row.id,asideTask.id);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.from,asideTask.to)" ng-model="button.save" ng-click="taskSave(asideRow,asideTask,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideRow,asideTask);$hide()" bs-checkbox>Delete</button>
                     <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>

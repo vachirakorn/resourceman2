@@ -2,12 +2,16 @@
     <div class="edit-panel-wrapper">
         <div class="col-wrapper" style="width: 25%;">
             <div class="col-header" style="background-color: {{headerColor}};">
-                RESOURCE{{change}}
+                RESOURCE
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
                     <input type="text" class="form-control" ng-model="asideRow.name" >
+                </div>
+                <div class="form-group">
+                    <label>ORDER</label>
+                    <input type="text" class="form-control"  ng-model="asideRow.order" >
                 </div>
             </div>
         </div>
@@ -53,9 +57,9 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="rowSave(asideRow);$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(asideRow.id);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideRow);$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(asideRow);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default" ng-if="asideRow.rid!=='0'" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>
