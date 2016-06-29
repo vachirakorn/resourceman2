@@ -322,10 +322,10 @@ angular.module('angularGanttDemoApp')
                     });
                     api.tasks.on.rowChange($scope, function(task, oldRow) {
                         //save old row
-                      //  $scope.resourceSave(oldRow.model);
-                        task.model.id = utils.randomUuid();
+                        $scope.resourceSave(oldRow.model);
+                      //  task.model.id = utils.randomUuid();
                         $scope.resourceSave(task.row.model);
-                        $scope.reload();
+                      //  $scope.reload();
                     });
 
                     // When gantt is ready, load data.
@@ -492,17 +492,17 @@ angular.module('angularGanttDemoApp')
 
         };
 
-        $scope.addResource = function(parent) {
+        $scope.addResource = function(parentID) {
             //  angular.copy($scope.data, dataTemp);
             //add a new resource to the view
             $scope.data.push({
+
                 order: getLastOrder('resource') + 1, //append to the bottom of resources list
                 name: 'New Resource',
                 tel: '',
                 email: '',
                 utilization: '0',
-                rid: '0',
-                parent:parent
+                parent:parentID
             });
             //assign last row
             $scope.asideRow = $scope.data[$scope.data.length - 1];
@@ -525,8 +525,7 @@ angular.module('angularGanttDemoApp')
                 color: '#45607D',
                 budget: '',
                 manager: '',
-                data: '',
-                rid: '0'
+                data: ''
             });
             $scope.asideProjectRow = $scope.data[$scope.data.length - 1];
 
@@ -570,16 +569,16 @@ angular.module('angularGanttDemoApp')
                     }];
                     $scope.remove();
                 } else {
-                    if (row.rid === '0') {
-                        //get rid from db when add new resource
-                        //response.data return rid
-                        $scope.data[$scope.data.length - 1].rid = response.data.trim();
-                        console.log('[LOG] get new task\'s rid ' + $scope.data[$scope.data.length - 1].rid);
-                        console.log(response);
-                    } else {
+                    // if (row.rid === '0') {
+                    //     //get rid from db when add new resource
+                    //     //response.data return rid
+                    //     $scope.data[$scope.data.length - 1].rid = response.data.trim();
+                    //     console.log('[LOG] get new task\'s rid ' + $scope.data[$scope.data.length - 1].rid);
+                    //     console.log(response);
+                    // } else {
                         //update resource has no response.data
                         console.log(response);
-                    }
+                  //  }
                     if (isAsideOpened) {
                         saveAlert = $alert({
                             title: row.name,
@@ -626,16 +625,9 @@ angular.module('angularGanttDemoApp')
 
             }).then(function mySuccess(response) {
                 console.log('[LOG] project successfully saved');
-                if (row.rid === '0') {
-                    //get rid from db when add new project
-                    //response.data return rid
-                    $scope.data[$scope.data.length - 1].rid = response.data.trim();
-                    console.log('[LOG] get new project\'s rid ' + $scope.data[$scope.data.length - 1].rid);
-                    console.log(response);
-                } else {
-                    //update project has no response.data
-                    console.log(response);
-                }
+                //update project has no response.data
+                console.log(response);
+                  $scope.getProjectsName();
                 if (isAsideOpened) {
                     saveAlert = $alert({
                         title: row.name,
@@ -653,6 +645,8 @@ angular.module('angularGanttDemoApp')
                 saveAlert.$promise.then(function() {
                     saveAlert.show();
                 });
+                //project list changed,updating projects name scope
+
             }, function myError(response) {
                 console.log('[LOG] failed to save the project');
                 $scope.cancel();
@@ -667,7 +661,7 @@ angular.module('angularGanttDemoApp')
                 console.log('FIND ROW WITH THE SAME ROWID');
                 var tasksTemp = [];
                 for (var i = 0; i < $scope.data.length; i++) {
-                    if ($scope.data[i].rid === row.rid) {
+                    if ($scope.data[i].id === row.id) {
                         for (var j = 0; j < $scope.data[i].tasks.length; j++) {
                             tasksTemp.push($scope.data[i].tasks[j]);
                         }
@@ -684,7 +678,7 @@ angular.module('angularGanttDemoApp')
                 url: 'scripts/controllers/dataLoader.jsp',
                 params: {
                     mode: 'taskSave',
-                    rid: row.rid,
+                    id: row.id,
                     tasks: JSON.stringify(row.tasks)
                 },
                 headers: {
@@ -718,16 +712,16 @@ angular.module('angularGanttDemoApp')
                 'id': row.id
             }];
             $scope.remove();
-            //row.rid === '0' means the resource just add and doesn't save yet
+            //row.id === '0' means the resource just add and doesn't save yet
             //simply delete offline
-            if (row.rid !== '0') {
+            if (row.id !== '0') {
                 //delete online
                 $http({
                     method: 'POST',
                     url: 'scripts/controllers/dataLoader.jsp',
                     params: {
                         mode: 'resourceDelete',
-                        rid: row.rid
+                        id: row.id
                     },
                     headers: {
                         'Content-Type': 'application/json'
@@ -751,13 +745,13 @@ angular.module('angularGanttDemoApp')
                 'id': row.id
             }];
             $scope.remove();
-            if (row.rid !== '0') {
+            if (row.id !== '0') {
                 $http({
                     method: 'POST',
                     url: 'scripts/controllers/dataLoader.jsp',
                     params: {
                         mode: 'projectDelete',
-                        rid: row.rid
+                        id: row.id
                     },
                     headers: {
                         'Content-Type': 'application/json'
@@ -826,6 +820,7 @@ angular.module('angularGanttDemoApp')
                 }).then(function mySuccess(response) {
                     console.log('success');
                     $scope.data = response.data;
+                    $scope.getProjectsName();
                 }, function myError(response) {
                     console.log('fail');
                     console.log(response);
@@ -844,7 +839,7 @@ angular.module('angularGanttDemoApp')
                 }).then(function mySuccess(response) {
                     console.log('success');
                     $scope.data = response.data;
-
+                    $scope.getProjectsName();
 
                 }, function myError(response) {
                     console.log('fail');
@@ -852,7 +847,7 @@ angular.module('angularGanttDemoApp')
                 });
 
             }
-            $scope.getProjectsName();
+
             $scope.timespans = Sample.getSampleTimespans();
         };
 
@@ -930,7 +925,7 @@ angular.module('angularGanttDemoApp')
         $scope.handleRowIconClick = function(rowModel) {
             alert('Icon from ' + rowModel.name + ' row has been clicked.');
             event.stopPropagation();
-            $scope.addResource(rowModel.name);
+            $scope.addResource(rowModel.id);
         };
 
         $scope.expandAll = function() {
