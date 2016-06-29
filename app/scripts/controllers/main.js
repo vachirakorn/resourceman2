@@ -13,7 +13,7 @@ angular.module('angularGanttDemoApp')
         $scope.rowTemp = {};
         $scope.projectTemp = {};
         $scope.projectsName = [];
-
+        var isFirstLoad = true;
         var objectModel;
         var dataToRemove;
         var isAsideOpened;
@@ -104,13 +104,13 @@ angular.module('angularGanttDemoApp')
             mode: 'custom',
             scale: 'day',
             sortMode: undefined,
-            sideMode: 'Table',
+            sideMode: 'TreeTable',
             daily: true,
             maxHeight: false,
             width: false,
             zoom: 1,
-            columns: ['model.name', 'model.utilization'],
-            treeTableColumns: ['model.priorityLevel', 'from', 'to'],
+            columns: ['model.name'],
+            treeTableColumns: [],
             columnsHeaders: {
                 'model.name': 'Name',
                 'from': 'From',
@@ -153,7 +153,7 @@ angular.module('angularGanttDemoApp')
             toDate: undefined,
             rowContentEnabled: true,
             taskContentEnabled: true,
-            rowContent: '{{row.model.order}}<i class="fa fa-user"></i> {{row.model.name}}',
+            rowContent: '<i class="fa fa-{{row.model.parent===\'\'?\'plus-square-o \':\'\'}}" style=\"color:#006699;\" ng-click="scope.handleRowIconClick(row.model)"></i><i class="fa fa-{{row.model.parent===\'\'?\'user\':\'\'}}"></i> {{row.model.name}}',
             taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
             allowSideResizing: true,
             labelsEnabled: true,
@@ -330,7 +330,11 @@ angular.module('angularGanttDemoApp')
 
                     // When gantt is ready, load data.
                     // `data` attribute could have been used too.
-                    // $scope.load();
+                    if(isFirstLoad){
+                      $scope.load();
+                      isFirstLoad = false;
+                    }
+
 
                     // Add some DOM events
                     // api.directives.on.new($scope, function(directiveName, directiveScope, element) {
@@ -488,7 +492,7 @@ angular.module('angularGanttDemoApp')
 
         };
 
-        $scope.addResource = function() {
+        $scope.addResource = function(parent) {
             //  angular.copy($scope.data, dataTemp);
             //add a new resource to the view
             $scope.data.push({
@@ -497,7 +501,8 @@ angular.module('angularGanttDemoApp')
                 tel: '',
                 email: '',
                 utilization: '0',
-                rid: '0'
+                rid: '0',
+                parent:parent
             });
             //assign last row
             $scope.asideRow = $scope.data[$scope.data.length - 1];
@@ -924,6 +929,8 @@ angular.module('angularGanttDemoApp')
 
         $scope.handleRowIconClick = function(rowModel) {
             alert('Icon from ' + rowModel.name + ' row has been clicked.');
+            event.stopPropagation();
+            $scope.addResource(rowModel.name);
         };
 
         $scope.expandAll = function() {
@@ -985,14 +992,19 @@ angular.module('angularGanttDemoApp')
 
         $scope.$watch('options.projectView', function(projectView) {
             if (projectView) {
-                $scope.options.sideMode = 'TreeTable';
+              //  $scope.options.sideMode = 'TreeTable';
+              $scope.options.treeTableColumns = ['model.priorityLevel', 'from', 'to'];
+
                 //$scope.options.groupDisplayMode = 'disabled';
             } else {
-                $scope.options.sideMode = 'Table';
+              //  $scope.options.sideMode = 'TreeTable';
+              $scope.options.treeTableColumns = [];
                 //  $scope.options.groupDisplayMode = 'disabled';
             }
             //when start or change view
+            if(!isFirstLoad)
             $scope.load();
+
 
         });
         $scope.$watchCollection('asideTask', function(newTasks, oldTasks) {

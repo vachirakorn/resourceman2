@@ -86,15 +86,16 @@
 		DBObject rowObj = (DBObject) JSON.parse(row);
 		String name = rowObj.get("name").toString();
 		String resourceRowId = rowObj.get("rid").toString();
-		if (resourceRowId.equals("0") && resource.findOne(new BasicDBObject("name", name)) != null) {
+		/* if (resourceRowId.equals("0") && resource.findOne(new BasicDBObject("name", name)) != null) {
 			System.out.println("error duplicate resource name");
 			out.print("duplicate resource name exists");
-		} else {
+		} else { */
 
 
 			rowObj.removeField("rid");
 			rowObj.removeField("id");
-			rowObj.removeField("parent");
+
+			//rowObj.removeField("parent");
 
 			BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 			System.out.println("\nRESOURCE SAVE");
@@ -113,7 +114,7 @@
 				BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(resourceRowId));
 				resource.update(query, update, true, false); //upsert
 			}
-		}
+		//}
 
 	} else if (mode.equals("projectSave")) {
 

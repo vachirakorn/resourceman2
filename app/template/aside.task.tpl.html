@@ -13,7 +13,7 @@
             <div class="col-field-wrapper" ng-if="asideRow.height===undefined">
                 <div class="form-group" >
                     <label>PROJECT</label><br>
-                    <button type="button" class="btn btn-default" ng-model="asideTask.project" data-html="1" data-toggle="true" bs-options="projectName.value as projectName.label for projectName in projectsName" data-placement="top-left" data-animation="" data-placeholder="     " bs-select></button>
+                    <button type="button" class="btn btn-default" style="width:220px;" ng-model="asideTask.project" data-html="1" data-toggle="true" bs-options="projectName.value as projectName.label for projectName in projectsName" data-placement="top-left" data-animation="" data-placeholder="     " bs-select></button>
 
                 </div>
             </div>
@@ -61,7 +61,7 @@
                     </br>
                     <input type="text" class="form-control" ng-model="asideTask.to" min-date="{{options.fromDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To" bs-datepicker>
                 </div>
-                <div class="form-group" id="datetime1">
+                <div class="form-group" >
                     <label class="control-label"><i class="fa fa-clock-o"></i> </label>
                     </br>
                     <input type="text" size="8" class="form-control" ng-model="asideTask.to" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
@@ -69,10 +69,10 @@
 
 
             </div>
-            <div class"col-field-wrapper">
+            <div class="col-field-wrapper">
             <div class="form-group">
-                    <label>ID</label>
-                    <input type="text" class="form-control" ng-model="asideRow.rid">
+                    <label class="control-label">ID</label>
+                    <input type="text" class="form-control" ng-model="asideRow.rid" style="width:250px;">
                 </div>
 
             </div>
