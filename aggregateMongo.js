@@ -1,0 +1,1 @@
+db.getCollection('resource_copy2').aggregate({$unwind:'$tasks'},{$match:{'tasks.project':'ITPD_All_DGW_Integrated Account Derivatives'}},{$group:{_id:{id:'$id',parent:'$parent'},rid:{$first:'$_id'},tasks:{$push:'$tasks'},order:{$first:'$order'},name:{$first:'$name'}}})

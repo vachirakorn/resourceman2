@@ -153,7 +153,7 @@ angular.module('angularGanttDemoApp')
             toDate: undefined,
             rowContentEnabled: true,
             taskContentEnabled: true,
-            rowContent: '<i class="fa fa-{{row.model.parent===\'\'?\'plus-square-o \':\'\'}}" style=\"color:#006699;\" ng-click="scope.handleRowIconClick(row.model)"></i><i class="fa fa-{{row.model.parent===\'\'?\'user\':\'\'}}"></i> {{row.model.name}}',
+            rowContent: '<i class="fa fa-{{row.model.parent===\'\'?\'plus-square-o \':\'\'}}" style=\"color:#006699;\" ng-click="scope.addSubResource(row.model)"></i><i class="fa fa-{{row.model.parent===\'\'?\'user\':\'\'}}"></i> {{row.model.name}}',
             taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
             allowSideResizing: true,
             labelsEnabled: true,
@@ -220,12 +220,15 @@ angular.module('angularGanttDemoApp')
                 return $scope.options.draw && !$scope.options.readOnly && isLeftMouseButton;
             },
             drawTaskFactory: function() {
+
                 return {
                     id: utils.randomUuid(), // Unique id of the task.
                     name: 'New task', // Name shown on top of each task.
                     project: 'Unassigned Project', //default project name of the task
                     color: '#AA8833' // Color of the task in HEX format (Optional).
                 };
+
+
             },
             api: function(api) {
                 // API Object is used to control methods and events from angular-gantt.
@@ -277,16 +280,16 @@ angular.module('angularGanttDemoApp')
                         }
                     });
                     api.rows.on.move($scope, function(row, oldIndex, newIndex) {
-                      var oldOrder,newOrder;
-                      if(oldIndex < newIndex){
-                        oldOrder = $scope.data[newIndex].order;
-                        newOrder = $scope.data[newIndex-1].order;
-                      }else if(newIndex < oldIndex){
-                        oldOrder = $scope.data[newIndex].order;
-                        newOrder = $scope.data[newIndex+1].order;
-                      }
+                        var oldOrder, newOrder;
+                        if (oldIndex < newIndex) {
+                            oldOrder = $scope.data[newIndex].order;
+                            newOrder = $scope.data[newIndex - 1].order;
+                        } else if (newIndex < oldIndex) {
+                            oldOrder = $scope.data[newIndex].order;
+                            newOrder = $scope.data[newIndex + 1].order;
+                        }
                         console.log('oldOrder : ' + oldOrder + ' newOrder : ' + newOrder);
-                      //  console.log('sent : '+row);
+                        //  console.log('sent : '+row);
 
                         $http({
                             method: 'POST',
@@ -312,7 +315,7 @@ angular.module('angularGanttDemoApp')
                                 saveAlert.show();
                             });
                             $scope.load();
-                              console.log(response);
+                            console.log(response);
                         }, function myError(response) {
                             console.log('[LOG] failed to save the data');
                             console.log(response);
@@ -323,16 +326,16 @@ angular.module('angularGanttDemoApp')
                     api.tasks.on.rowChange($scope, function(task, oldRow) {
                         //save old row
                         $scope.resourceSave(oldRow.model);
-                      //  task.model.id = utils.randomUuid();
+                        //  task.model.id = utils.randomUuid();
                         $scope.resourceSave(task.row.model);
-                      //  $scope.reload();
+                        //  $scope.reload();
                     });
 
                     // When gantt is ready, load data.
                     // `data` attribute could have been used too.
-                    if(isFirstLoad){
-                      $scope.load();
-                      isFirstLoad = false;
+                    if (isFirstLoad) {
+                        $scope.load();
+                        isFirstLoad = false;
                     }
 
 
@@ -385,7 +388,7 @@ angular.module('angularGanttDemoApp')
 
                                 if (isAsideOpened) {
                                     //auto save if user click other tasks
-                                    $scope.taskSave($scope.asideRow, $scope.asideTask,'autosave');
+                                    $scope.taskSave($scope.asideRow, $scope.asideTask, 'autosave');
                                     taskAside.hide();
                                 }
                                 //  $scope.taskTemp = angular.copy(directiveScope.task.model);
@@ -481,18 +484,48 @@ angular.module('angularGanttDemoApp')
             var maxx = -99999;
             for (var i = $scope.data.length - 1; i >= 0; i--) {
 
-                if (type ==='resource' && $scope.data[i].order !== undefined && $scope.data[i].order > maxx) {
+                if (type === 'resource' && $scope.data[i].order !== undefined && $scope.data[i].order > maxx) {
                     maxx = $scope.data[i].order;
-                }
-                else if(type ==='project' && $scope.data[i].projectOrder !== undefined && $scope.data[i].projectOrder > maxx && $scope.data[i].projectOrder<99999){
+                } else if (type === 'project' && $scope.data[i].projectOrder !== undefined && $scope.data[i].projectOrder > maxx && $scope.data[i].projectOrder < 99999) {
                     maxx = $scope.data[i].projectOrder;
                 }
             }
             return maxx;
 
         };
+        $scope.addSubResource = function(rowModel) {
+            //alert('Icon from ' + rowModel.name + ' row has been clicked.');
+            event.stopPropagation();
+            if($scope.options.projectView){
+              $scope.data.push({
+                  order: getLastOrder('resource') + 1, //append to the bottom of resources list
+                  name: 'New Row',
+                  tel: '',
+                  email: '',
+                  utilization: '0',
+                  parent: rowModel.id,
+                  oldParent: rowModel.oldParent
+              });
+            }else{
+              $scope.data.push({
+                  order: getLastOrder('resource') + 1, //append to the bottom of resources list
+                  name: 'New Row',
+                  tel: '',
+                  email: '',
+                  utilization: '0',
+                  parent: rowModel.id
+              });
+            }
 
-        $scope.addResource = function(parentID) {
+            //assign last row
+            $scope.asideRow = $scope.data[$scope.data.length - 1];
+            //pop up the aside
+            resourceAside.$promise.then(function() {
+                resourceAside.show();
+            });
+
+        };
+        $scope.addResource = function() {
             //  angular.copy($scope.data, dataTemp);
             //add a new resource to the view
             $scope.data.push({
@@ -502,8 +535,9 @@ angular.module('angularGanttDemoApp')
                 tel: '',
                 email: '',
                 utilization: '0',
-                parent:parentID
+                parent: ''
             });
+
             //assign last row
             $scope.asideRow = $scope.data[$scope.data.length - 1];
             //pop up the aside
@@ -519,7 +553,7 @@ angular.module('angularGanttDemoApp')
 
             $scope.data.push({
                 name: 'New Project',
-                projectOrder:getLastOrder('project') + 1,
+                projectOrder: getLastOrder('project') + 1,
                 height: '3em',
                 classes: 'gantt-row-milestone',
                 color: '#45607D',
@@ -538,15 +572,29 @@ angular.module('angularGanttDemoApp')
 
 
         $scope.resourceSave = function(row) {
-            //..db
-            //add a new resource to db
-            console.log("send: " + JSON.stringify(row));
+
+            var rowId;
+            var tempRow = angular.copy(row);
+            if ($scope.options.projectView) {
+                //project view
+                if (row.oldId !== undefined) {
+                    tempRow.id = row.oldId;
+                }
+                if (row.oldParent !== undefined) {
+                    tempRow.parent = row.oldParent;
+                }
+
+            } else {
+                //resource view
+                tempRow.id = row.id;
+            }
+            console.log("send: " + JSON.stringify(tempRow));
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
                 params: {
                     mode: 'resourceSave',
-                    row: JSON.stringify(row)
+                    row: JSON.stringify(tempRow)
                 },
                 headers: {
                     'Content-Type': 'application/json'
@@ -576,9 +624,9 @@ angular.module('angularGanttDemoApp')
                     //     console.log('[LOG] get new task\'s rid ' + $scope.data[$scope.data.length - 1].rid);
                     //     console.log(response);
                     // } else {
-                        //update resource has no response.data
-                        console.log(response);
-                  //  }
+                    //update resource has no response.data
+                    console.log(response);
+                    //  }
                     if (isAsideOpened) {
                         saveAlert = $alert({
                             title: row.name,
@@ -611,7 +659,7 @@ angular.module('angularGanttDemoApp')
         $scope.projectSave = function(row) {
             //..db
             //add a new resource to db
-            console.log("send: " + JSON.stringify(row));
+            console.log('send: ' + JSON.stringify(row));
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
@@ -627,7 +675,7 @@ angular.module('angularGanttDemoApp')
                 console.log('[LOG] project successfully saved');
                 //update project has no response.data
                 console.log(response);
-                  $scope.getProjectsName();
+                $scope.getProjectsName();
                 if (isAsideOpened) {
                     saveAlert = $alert({
                         title: row.name,
@@ -648,38 +696,43 @@ angular.module('angularGanttDemoApp')
                 //project list changed,updating projects name scope
 
             }, function myError(response) {
-                console.log('[LOG] failed to save the project');
+                console.log('[LOG] Failed to save the project');
                 $scope.cancel();
                 console.log(response);
             });
             isAsideOpened = false;
         };
-        $scope.taskSave = function(row, task,type) {
+        $scope.taskSave = function(row, task, type) {
             // var i,j;
             //..db
+            var tasks = [];
+            var rowId;
             if ($scope.options.projectView) {
-                console.log('FIND ROW WITH THE SAME ROWID');
-                var tasksTemp = [];
+                console.log('[LOG] FIND ROW WITH THE SAME ROWID');
                 for (var i = 0; i < $scope.data.length; i++) {
-                    if ($scope.data[i].id === row.id) {
+                    if ($scope.data[i].oldId === row.oldId && $scope.data[i].tasks !== undefined) {
                         for (var j = 0; j < $scope.data[i].tasks.length; j++) {
-                            tasksTemp.push($scope.data[i].tasks[j]);
+                            tasks.push($scope.data[i].tasks[j]);
                         }
-                        console.log("FOUND!");
-                        console.log(JSON.stringify(tasksTemp) + "\n");
+                        console.log('[LOG] FOUND!');
+                        console.log(JSON.stringify(tasks) + '\n');
                     }
                 }
-                row.tasks = tasksTemp;
+                rowId = row.oldId;
+            } else {
+                tasks = row.tasks;
+                rowId = row.id;
             }
 
-            console.log("send: " + JSON.stringify(row.tasks));
+            console.log('SEND : ' + JSON.stringify(row));
+            console.log('ROW ID : ' + rowId);
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
                 params: {
                     mode: 'taskSave',
-                    id: row.id,
-                    tasks: JSON.stringify(row.tasks)
+                    id: rowId,
+                    tasks: JSON.stringify(tasks)
                 },
                 headers: {
                     'Content-Type': 'application/json'
@@ -689,17 +742,20 @@ angular.module('angularGanttDemoApp')
                 console.log('[LOG] row successfully saved');
                 saveAlert = $alert({
                     title: task.name,
-                    content: ' successfully '+ (type==='delete'?'deleted!':type==='autosaved!'?'autosaved':'saved!') ,
+                    content: ' successfully ' + (type === 'delete' ? 'deleted!' : type === 'autosaved!' ? 'autosaved' : 'saved!'),
                     type: 'success',
 
                 });
                 saveAlert.$promise.then(function() {
                     saveAlert.show();
                 });
+                if ($scope.options.projectView) {
+                    $scope.reload();
+                }
                 console.log(response);
             }, function myError(response) {
-                console.log('[LOG] fail to save the tasks');
-                $scope.cancel();
+                console.log('[LOG] Failed to save the tasks');
+                $scope.cancel('row');
                 console.log(response);
             });
             isAsideOpened = false;
@@ -777,7 +833,7 @@ angular.module('angularGanttDemoApp')
                 }]
             }];
             $scope.remove();
-            $scope.taskSave(row, task,'delete');
+            $scope.taskSave(row, task, 'delete');
         };
 
 
@@ -806,7 +862,20 @@ angular.module('angularGanttDemoApp')
         //$http.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
 
         $scope.load = function() {
+            //reset temp data when change view
+            if (isAsideOpened) {
+                console.log('[LOG] Close aside');
+                taskAside.hide();
+                projectAside.hide();
+                resourceAside.hide();
+                isAsideOpened = false;
+            }
             $scope.data = [];
+            $scope.taskTemp = {};
+            $scope.rowTemp = {};
+            $scope.projectTemp = {};
+
+            //begin load
             if (!$scope.options.projectView) {
                 $http({
                     method: 'POST',
@@ -837,8 +906,21 @@ angular.module('angularGanttDemoApp')
                         'Content-Type': 'application/json'
                     }
                 }).then(function mySuccess(response) {
-                    console.log('success');
-                    $scope.data = response.data;
+                    var splitedProjectArr = [];
+                    var tempData = [];
+                    for (var i = 0; i < response.data.length; i++) {
+                        console.log(response.data[i]);
+                        if (response.data[i].end) {
+                            tempData = tempData.concat(changeAllId(splitedProjectArr));
+                            splitedProjectArr = [];
+                        } else {
+                            splitedProjectArr.push(response.data[i]);
+                            console.log('[LOG] split project arr[' + i + '] : ' + angular.toJson(splitedProjectArr));
+                        }
+
+                    }
+                    console.log("temp data : " + angular.toJson(tempData));
+                    $scope.data = tempData;
                     $scope.getProjectsName();
 
                 }, function myError(response) {
@@ -849,6 +931,27 @@ angular.module('angularGanttDemoApp')
             }
 
             $scope.timespans = Sample.getSampleTimespans();
+        };
+        var changeAllId = function(arr) {
+            var map = [];
+            var newID, oldID;
+            for (var i = 0; i < arr.length; i++) {
+                newID = utils.randomUuid();
+                oldID = arr[i].id;
+                map[oldID] = newID;
+                arr[i].id = newID;
+                arr[i].oldId = oldID;
+
+            }
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].parent !== '' && arr[i].parent !== null) {
+                    arr[i].oldParent = arr[i].parent;
+                    arr[i].parent = map[arr[i].parent];
+                }
+            }
+            console.log("arr : " + arr);
+            return arr;
+
         };
 
         $scope.getProjectsName = function() {
@@ -882,14 +985,10 @@ angular.module('angularGanttDemoApp')
         $scope.reload = function() {
             $scope.load();
         };
-
-
-
         // Clear data action
         $scope.clear = function() {
             $scope.data = [];
         };
-
         // Add data to target row index
         $scope.addOverlapTaskToTargetRowIndex = function() {
             var targetDataAddRowIndex = parseInt($scope.options.targetDataAddRowIndex);
@@ -922,11 +1021,7 @@ angular.module('angularGanttDemoApp')
             alert('Icon from ' + taskModel.name + ' task has been clicked.');
         };
 
-        $scope.handleRowIconClick = function(rowModel) {
-            alert('Icon from ' + rowModel.name + ' row has been clicked.');
-            event.stopPropagation();
-            $scope.addResource(rowModel.id);
-        };
+
 
         $scope.expandAll = function() {
             $scope.api.tree.expandAll();
@@ -986,28 +1081,28 @@ angular.module('angularGanttDemoApp')
         });
 
         $scope.$watch('options.projectView', function(projectView) {
-            if (projectView) {
-              //  $scope.options.sideMode = 'TreeTable';
-              $scope.options.treeTableColumns = ['model.priorityLevel', 'from', 'to'];
 
+            if (projectView) {
+                //$scope.options.sideMode = 'TreeTable';
+                $scope.options.treeTableColumns = ['model.priorityLevel', 'from', 'to'];
                 //$scope.options.groupDisplayMode = 'disabled';
             } else {
-              //  $scope.options.sideMode = 'TreeTable';
-              $scope.options.treeTableColumns = [];
+                //  $scope.options.sideMode = 'TreeTable';
+                $scope.options.treeTableColumns = [];
                 //  $scope.options.groupDisplayMode = 'disabled';
             }
             //when start or change view
-            if(!isFirstLoad)
-            $scope.load();
+            if (!isFirstLoad)
+                $scope.load();
 
 
         });
-        $scope.$watchCollection('asideTask', function(newTasks, oldTasks) {
-            console.log("old: " + JSON.stringify(oldTasks));
-            console.log("new: " + JSON.stringify(newTasks));
-
-
-        });
+        // $scope.$watchCollection('asideTask', function(newTasks, oldTasks) {
+        //     console.log("old: " + JSON.stringify(oldTasks));
+        //     console.log("new: " + JSON.stringify(newTasks));
+        //
+        //
+        // });
 
 
         // Visual two way binding.
