@@ -330,6 +330,12 @@ angular.module('angularGanttDemoApp')
                         $scope.resourceSave(task.row.model);
                         //  $scope.reload();
                     });
+                    api.tasks.on.add($scope,function(task){          
+                    //  console.log(task.row.model.currentProject);
+                      if($scope.options.projectView)
+                      task.model.project = task.row.model.currentProject;
+
+                    });
 
                     // When gantt is ready, load data.
                     // `data` attribute could have been used too.
@@ -588,6 +594,9 @@ angular.module('angularGanttDemoApp')
                 //resource view
                 tempRow.id = row.id;
             }
+            tempRow.oldId = '';
+            tempRow.oldParent = undefined;
+
             console.log("send: " + JSON.stringify(tempRow));
             $http({
                 method: 'POST',

@@ -228,6 +228,7 @@
 				String parentRowId = ((DBObject) resourceObj.get("_id")).get("parent").toString();
 				String resourceRowRid = resourceObj.get("rid").toString();
 				resourceObj.put("rid",resourceRowRid);
+				resourceObj.put("currentProject",projectName);
 
 				resourceObj.removeField("_id");
 				if (!parentRowId.equals("")) {
