@@ -330,9 +330,9 @@ angular.module('angularGanttDemoApp')
                         $scope.resourceSave(task.row.model);
                         //  $scope.reload();
                     });
-                    api.tasks.on.add($scope,function(task){          
+                    api.tasks.on.add($scope,function(task){
                     //  console.log(task.row.model.currentProject);
-                      if($scope.options.projectView)
+                      if($scope.options.projectView && task.row.model.currentProject!==undefined)
                       task.model.project = task.row.model.currentProject;
 
                     });
@@ -534,6 +534,7 @@ angular.module('angularGanttDemoApp')
         $scope.addResource = function() {
             //  angular.copy($scope.data, dataTemp);
             //add a new resource to the view
+            if(!$scope.options.projectView)
             $scope.data.push({
 
                 order: getLastOrder('resource') + 1, //append to the bottom of resources list
@@ -556,7 +557,7 @@ angular.module('angularGanttDemoApp')
 
         $scope.addProject = function() {
             //copy
-
+            if($scope.options.projectView)
             $scope.data.push({
                 name: 'New Project',
                 projectOrder: getLastOrder('project') + 1,
@@ -590,11 +591,12 @@ angular.module('angularGanttDemoApp')
                     tempRow.parent = row.oldParent;
                 }
 
+
             } else {
                 //resource view
                 tempRow.id = row.id;
             }
-            tempRow.oldId = '';
+            tempRow.oldId = undefined;
             tempRow.oldParent = undefined;
 
             console.log("send: " + JSON.stringify(tempRow));
@@ -1262,7 +1264,7 @@ angular.module('angularGanttDemoApp')
             'value': 'SR'
         }];
 
-
+        
 
 
 

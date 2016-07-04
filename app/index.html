@@ -284,12 +284,12 @@
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-user-plus"></i> Resources/Row</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-click="addResource()">+Add new</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="options.projectView" ng-click="addResource()">+Add new</button>
                                                     </div>
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-briefcase"></i> Project</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-click="addProject()">+Add project</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="!options.projectView" ng-click="addProject()">+Add project</button>
                                                     </div>
 
                                                     <!-- <div class="form-group text-center">
@@ -344,20 +344,9 @@
                                             </div>
                                         </div>
 
-                                        <div class="panel-body" style="height:1500px;">
-                                            {{data}}
+                                        <div class="panel-body" style="height:auto;" ng-style="(eachdata.height==='3em' || eachdata.parent==='') && {'background-color':'#f2f2f2'}" ng-repeat="eachdata in data track by $index">
+                                            {{eachdata}}
 
-                                            <!-- <div class="live-table">
-                                            <div class="live-cell" ng-show="data.length > 0">
-                                                <h4><button type="button" style="text-align: left" class="btn btn-default" ng-model="live.row" bs-options="r as r.name for r in data" bs-select></button> (Row object)</h4>
-                                                <textarea class="live-row" ng-model="live.rowJson"></textarea>
-                                            </div>
-                                            <div class="live-cell" ng-show="live.row.tasks.length > 0">
-                                                <h4><button type="button" style="text-align: left" class="btn btn-default" ng-model="live.task" bs-options="t as t.name for t in live.row.tasks" bs-select></button> (Task object)</h4>
-                                                <textarea class="live-task" ng-model="live.taskJson"></textarea>
-                                            </div>
-
-                                        </div> -->
                                         </div>
 
                                     </div>
