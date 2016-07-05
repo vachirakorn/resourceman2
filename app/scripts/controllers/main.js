@@ -158,7 +158,7 @@ angular.module('angularGanttDemoApp')
             allowSideResizing: true,
             labelsEnabled: true,
             currentDate: 'column',
-            currentDateValue: moment(),
+            currentDateValue: new Date(),
             draw: true,
             readOnly: false,
             groupDisplayMode: 'disabled',
@@ -338,6 +338,14 @@ angular.module('angularGanttDemoApp')
                         if ($scope.options.projectView && task.row.model.currentProject !== undefined)
                             task.model.project = task.row.model.currentProject;
 
+                    });
+                    api.dependencies.on.add($scope,function(dependency){
+                        console.log('dependencies change');
+                        $scope.taskSave(dependency.task.row.model,dependency.task.model,'autosave');
+                    });
+                    api.dependencies.on.remove($scope,function(dependency){
+                        console.log('remove dependencies');
+                        $scope.taskSave(dependency.task.row.model,dependency.task.model,'autosave');
                     });
 
                     // When gantt is ready, load data.
@@ -582,13 +590,11 @@ angular.module('angularGanttDemoApp')
 
 
         $scope.resourceSave = function(rowModel) {
-
-            var rowId;
             var tempRowModel = angular.copy(rowModel);
             if ($scope.options.projectView) {
-                if (row.oldId !== undefined)
+                if (rowModel.oldId !== undefined)
                     tempRowModel.id = rowModel.oldId;
-                if (row.oldParent !== undefined)
+                if (rowModel.oldParent !== undefined)
                     tempRowModel.parent = rowModel.oldParent;
             } else
                 tempRowModel.id = rowModel.id;
@@ -618,7 +624,7 @@ angular.module('angularGanttDemoApp')
                     });
                     //delete duplicated row name
                     dataToRemove = [{
-                        'id': row.id
+                        'id': rowModel.id
                     }];
                     $scope.remove();
                 } else {
@@ -634,14 +640,14 @@ angular.module('angularGanttDemoApp')
                     //  }
                     if (isAsideOpened) {
                         saveAlert = $alert({
-                            title: row.name,
+                            title: tempRowModel.name,
                             content: ' successfully autosaved!',
                             type: 'success',
 
                         });
                     } else {
                         saveAlert = $alert({
-                            title: row.name,
+                            title: tempRowModel.name,
                             content: ' successfully saved!',
                             type: 'success'
                         });
@@ -652,6 +658,7 @@ angular.module('angularGanttDemoApp')
                     saveAlert.show();
                 });
 
+
             }, function myError(response) {
                 console.log('[LOG] fail to save the row');
                 $scope.cancel('resource');
@@ -661,24 +668,24 @@ angular.module('angularGanttDemoApp')
 
         };
 
-        $scope.projectSave = function(row) {
+        $scope.projectSave = function(rowModel) {
             //..db
             //add a new resource to db
 
-            var rowId;
-            var tempRow = angular.copy(row);
-            if ($scope.options.projectView && row.oldId !== undefined)
-                tempRow.id = row.oldId;
+            var rowModelId;
+            var tempRowModel = angular.copy(rowModel);
+            if ($scope.options.projectView && rowModel.oldId !== undefined)
+                tempRowModel.id = rowModel.oldId;
 
-            tempRow.oldId = undefined;
-            tempRow.oldParent = undefined;
-            console.log("send: " + JSON.stringify(tempRow));
+            tempRowModel.oldId = undefined;
+            tempRowModel.oldParent = undefined;
+            console.log("send: " + JSON.stringify(tempRowModel));
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
                 params: {
                     mode: 'projectSave',
-                    row: JSON.stringify(tempRow)
+                    row: JSON.stringify(tempRowModel)
                 },
                 headers: {
                     'Content-Type': 'application/json'
@@ -691,14 +698,14 @@ angular.module('angularGanttDemoApp')
                 $scope.getProjectsName();
                 if (isAsideOpened) {
                     saveAlert = $alert({
-                        title: row.name,
+                        title: tempRowModel.name,
                         content: ' successfully autosaved!',
                         type: 'success',
 
                     });
                 } else {
                     saveAlert = $alert({
-                        title: row.name,
+                        title: tempRowModel.name,
                         content: ' successfully saved!',
                         type: 'success'
                     });
@@ -715,13 +722,13 @@ angular.module('angularGanttDemoApp')
             });
             isAsideOpened = false;
         };
-        $scope.taskSave = function(row, task, type) {
+        $scope.taskSave = function(rowModel, task, type) {
             var tasks = [];
-            var rowId;
+            var rowModelId;
             if ($scope.options.projectView) {
                 console.log('[LOG] FIND ROW WITH THE SAME ROWID');
                 for (var i = 0; i < $scope.data.length; i++) {
-                    if ($scope.data[i].oldId === row.oldId && $scope.data[i].tasks !== undefined) {
+                    if ($scope.data[i].oldId === rowModel.oldId && $scope.data[i].tasks !== undefined) {
                         for (var j = 0; j < $scope.data[i].tasks.length; j++) {
                             tasks.push($scope.data[i].tasks[j]);
                         }
@@ -729,20 +736,20 @@ angular.module('angularGanttDemoApp')
                         console.log(JSON.stringify(tasks) + '\n');
                     }
                 }
-                rowId = row.oldId;
+                rowModelId = rowModel.oldId;
             } else {
-                tasks = row.tasks;
-                rowId = row.id;
+                tasks = rowModel.tasks;
+                rowModelId = rowModel.id;
             }
 
-            console.log('SEND : ' + JSON.stringify(row));
-            console.log('ROW ID : ' + rowId);
+            console.log('SEND : ' + JSON.stringify(rowModel));
+            console.log('ROW ID : ' + rowModelId);
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
                 params: {
                     mode: 'taskSave',
-                    id: rowId,
+                    id: rowModelId,
                     tasks: JSON.stringify(tasks)
                 },
                 headers: {
@@ -750,19 +757,17 @@ angular.module('angularGanttDemoApp')
                 }
 
             }).then(function mySuccess(response) {
-                console.log('[LOG] row successfully saved');
+                console.log('[LOG] rowModel successfully saved');
                 saveAlert = $alert({
                     title: task.name,
-                    content: ' successfully ' + (type === 'delete' ? 'deleted!' : type === 'autosaved!' ? 'autosaved' : 'saved!'),
+                    content: ' successfully ' + (type === 'delete' ? 'deleted!' : type === 'autosave' ? 'autosaved!' : 'saved!'),
                     type: 'success',
 
                 });
                 saveAlert.$promise.then(function() {
                     saveAlert.show();
                 });
-                if ($scope.options.projectView) {
-                    $scope.reload();
-                }
+
                 console.log(response);
             }, function myError(response) {
                 console.log('[LOG] Failed to save the tasks');
@@ -773,32 +778,32 @@ angular.module('angularGanttDemoApp')
 
             //$scope.reload();
         };
-        $scope.resourceDelete = function(row) {
+        $scope.resourceDelete = function(rowModel) {
             //delete offline
             dataToRemove = [{
-                'id': row.id
+                'id': rowModel.id
             }];
             $scope.remove();
-            //row.id === '0' means the resource just add and doesn't save yet
+            //rowModel.id === '0' means the resource just add and doesn't save yet
             //simply delete offline
-            if (row.id !== '0') {
+            if (rowModel.id !== '0') {
                 //delete online
                 $http({
                     method: 'POST',
                     url: 'scripts/controllers/dataLoader.jsp',
                     params: {
                         mode: 'resourceDelete',
-                        id: row.id
+                        id: rowModel.id
                     },
                     headers: {
                         'Content-Type': 'application/json'
                     }
 
                 }).then(function mySuccess(response) {
-                    console.log('[LOG] row successfully deleted');
+                    console.log('[LOG] rowModel successfully deleted');
                     console.log(response);
                 }, function myError(response) {
-                    console.log('[LOG] fail to delete the row');
+                    console.log('[LOG] fail to delete the rowModel');
                     $scope.cancel('row');
                     console.log(response);
                 });
@@ -806,45 +811,45 @@ angular.module('angularGanttDemoApp')
 
             isAsideOpened = false;
         };
-        $scope.projectDelete = function(row) {
+        $scope.projectDelete = function(rowModel) {
 
             dataToRemove = [{
-                'id': row.id
+                'id': rowModel.id
             }];
             $scope.remove();
-            if (row.id !== '0') {
+            if (rowModel.id !== '0') {
                 $http({
                     method: 'POST',
                     url: 'scripts/controllers/dataLoader.jsp',
                     params: {
                         mode: 'projectDelete',
-                        id: row.id
+                        id: rowModel.id
                     },
                     headers: {
                         'Content-Type': 'application/json'
                     }
 
                 }).then(function mySuccess(response) {
-                    console.log('[LOG] project row successfully deleted');
+                    console.log('[LOG] project rowModel successfully deleted');
                     console.log(response);
                 }, function myError(response) {
-                    console.log('[LOG] fail to delete the project row');
+                    console.log('[LOG] fail to delete the project rowModel');
                     $scope.cancel('row');
                     console.log(response);
                 });
             }
             isAsideOpened = false;
         };
-        $scope.taskDelete = function(row, task) {
+        $scope.taskDelete = function(rowModel, task) {
 
             dataToRemove = [{
-                'id': row.id,
+                'id': rowModel.id,
                 'tasks': [{
                     'id': task.id
                 }]
             }];
             $scope.remove();
-            $scope.taskSave(row, task, 'delete');
+            $scope.taskSave(rowModel, task, 'delete');
         };
 
 
