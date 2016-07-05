@@ -48,7 +48,18 @@
 	private String randomUuid() {
 		return this.random4() + this.random4() + '-' + this.random4() + '-' + this.random4() + '-' + this.random4()
 				+ '-' + this.random4() + this.random4() + this.random4();
-	}%>
+	}
+	private boolean isAdded(ArrayList<String> arr,String id){
+		for (String s : arr) {
+			if (s.matches(id)) {
+				return true;
+			}
+
+		}
+		return false;
+
+	}
+	%>
 
 <%
 	DBCollection resource = checkConnection("resource");
@@ -173,10 +184,7 @@
 		BasicDBObject data = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
 		ArrayList<String> addedRow = new ArrayList<String>();
-		boolean isAdded = false;
 		boolean parentRowHasTask = false;
-		boolean isOnlyParentRow = false;
-		DBObject tempParentRow = new BasicDBObject();
 
 		//fields.put("_id", 0);
 
@@ -194,15 +202,15 @@
 			String projectRowId = projectObj.get("id").toString();
 			projectObj.put("rid", projectRowRid);
 			projectObj.removeField("_id");
-			//String projectRowId = projectObj.get("id").toString();
 
+			//print out project
 			System.out.println("\nPROJECT LOADING");
 			System.out.println("name : " + projectObj.get("name"));
 			System.out.println("id : " + projectObj.get("id"));
 			System.out.println("parent : " + projectObj.get("parent"));
 			out.print(projectObj);
 
-			//find resources who have tasks related to the project
+			//find resource row who have tasks related to the project
 			Iterable<DBObject> resourceObjs = resource
 					.aggregate(Arrays.asList((DBObject) new BasicDBObject("$unwind", "$tasks"),
 							(DBObject) new BasicDBObject("$match",
@@ -218,76 +226,92 @@
 													.append("name", new BasicDBObject("$first", "$name"))
 													.append("tel", new BasicDBObject("$first", "$tel"))
 													.append("email", new BasicDBObject("$first", "$email"))
-													.append("utilization",
-															new BasicDBObject("$first", "$utilization"))
+													.append("utilization",new BasicDBObject("$first", "$utilization"))
 													.append("tasks", new BasicDBObject("$push", "$tasks"))),
 							(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1))))
 					.results();
 
 			for (DBObject resourceObj : resourceObjs) {
-				isOnlyParentRow = false;
-				if (resourceObj.get("parent").toString().equalsIgnoreCase("")) {
-					tempParentRow = resourceObj;
-					isOnlyParentRow = true;
-					continue;
-				} //skip parent resource row
-				String parentRowId = ((DBObject) resourceObj.get("_id")).get("parent").toString();
+
+				String resourceRowId = resourceObj.get("id").toString();
 				String resourceRowRid = resourceObj.get("rid").toString();
 				resourceObj.put("rid", resourceRowRid);
 				resourceObj.put("currentProject", projectName);
-
 				resourceObj.removeField("_id");
-				if (!parentRowId.equals("")) {
-					//check duplicate row
-					isAdded = false;
-					for (String string : addedRow) {
-						if (string.matches(parentRowId)) {
-							isAdded = true;
-							break;
-						}
+
+				String parentRowId = resourceObj.get("parent").toString();
+
+				if (parentRowId.equalsIgnoreCase("")) {
+					//has no parent row
+					//bug fix when only main resource row has tasks
+
+					resourceObj.put("parent", projectRowId);
+					resourceObj.put("oldParent", "");
+					resourceObj.put("currentProject", projectName);
+					resourceObj.removeField("_id");
+					if(!isAdded(addedRow,resourceRowId)){
+						addedRow.add(resourceRowId);
+						out.print(",");
+						out.print(resourceObj);
 					}
 
-					if (!isAdded) {
+
+				} else {
+					//has parent row
+					DBObject parentRowObj = resource.findOne(new BasicDBObject("id", parentRowId));
+					String parentRowObjId = parentRowObj.get("id").toString();
+						//parent row has no tasks related to project
+						if (!isAdded(addedRow,parentRowObjId)) {
+							//objectID to string RID
+							addedRow.add(parentRowObjId);
+							parentRowObj.put("parent", projectRowId);
+							parentRowObj.put("oldParent", "");
+							parentRowObj.put("currentProject", projectName);
+							parentRowObj.removeField("_id");
+							//remove tasks !
+							parentRowObj.removeField("tasks");
+
+							System.out.println("\n\nADDED PARENT ROW NO TASK ");
+							System.out.println(",");
+							System.out.println("name : " + parentRowObj.get("name"));
+							System.out.println("id : " + parentRowObj.get("id"));
+
+							out.print(",");
+							out.print(parentRowObj.toString());
+						}
+
+						//print sub resource row
+						if (!isAdded(addedRow,resourceRowId)) {
+							addedRow.add(resourceRowId);
+
+							System.out.println("\nLOADING RESOURCE");
+							System.out.println(",");
+							System.out.println("name : " + resourceObj.get("name"));
+							System.out.println("id : " + resourceObj.get("id"));
+							System.out.println("parent : " + resourceObj.get("parent"));
+
+							out.print(",");
+							out.print(resourceObj);
+
+						}
+					/* if (!isAdded(addedRow,parentRowId)) {
 						addedRow.add(parentRowId);
 						//DBObject parentRowObj = resource.findOne(new BasicDBObject("id", parentRowId));
 						Iterable<DBObject> parentRowObjs = resource
 								.aggregate(Arrays.asList((DBObject) new BasicDBObject("$unwind", "$tasks"),
-										(DBObject) new BasicDBObject("$match",
-												new BasicDBObject("tasks.project", projectObj.get("name"))
+										(DBObject) new BasicDBObject("$match",new BasicDBObject("tasks.project", projectObj.get("name"))
 														.append("id", parentRowId)),
-										(DBObject) new BasicDBObject("$group",
-												new BasicDBObject("_id",
-														new BasicDBObject("parent", "$parent")
-																.append("id", "$id"))
-																		.append("id",
-																				new BasicDBObject("$first",
-																						"$id"))
-																		.append("rid",
-																				new BasicDBObject("$first",
-																						"$_id"))
-																		.append("parent",
-																				new BasicDBObject("$first",
-																						"$parent"))
-																		.append("order",
-																				new BasicDBObject("$first",
-																						"$order"))
-																		.append("name",
-																				new BasicDBObject("$first",
-																						"$name"))
-																		.append("tel",
-																				new BasicDBObject("$first",
-																						"$tel"))
-																		.append("email",
-																				new BasicDBObject("$first",
-																						"$email"))
-																		.append("utilization",
-																				new BasicDBObject("$first",
-																						"$utilization"))
-																		.append("tasks", new BasicDBObject(
-																				"$push", "$tasks"))),
-
-										(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1))))
-								.results();
+										(DBObject) new BasicDBObject("$group",new BasicDBObject("_id",new BasicDBObject("parent", "$parent").append("id", "$id"))
+																		.append("id",new BasicDBObject("$first","$id"))
+																		.append("rid",new BasicDBObject("$first","$_id"))
+																		.append("parent",new BasicDBObject("$first","$parent"))
+																		.append("order",new BasicDBObject("$first","$order"))
+																		.append("name",new BasicDBObject("$first","$name"))
+																		.append("tel",new BasicDBObject("$first","$tel"))
+																		.append("email",new BasicDBObject("$first","$email"))
+																		.append("utilization",new BasicDBObject("$first","$utilization"))
+																		.append("tasks", new BasicDBObject("$push", "$tasks"))),
+										(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1)))).results();
 
 						for (DBObject parentRowObj : parentRowObjs) {
 							parentRowHasTask = true;
@@ -307,63 +331,19 @@
 							out.print(",");
 							out.print(parentRowObj.toString());
 
-						}
-						if (!parentRowHasTask) {
-							DBObject parentRowNoTask = resource.findOne(new BasicDBObject("id", parentRowId));
+						} */
 
-							//objectID to string RID
-							String parentRowNoTaskRid = parentRowNoTask.get("_id").toString();
-							parentRowNoTask.put("parent", projectRowId);
-							parentRowNoTask.put("oldParent", "");
-							parentRowNoTask.put("rid", parentRowNoTaskRid);
-							parentRowNoTask.put("currentProject", projectName);
-							parentRowNoTask.removeField("_id");
-							parentRowNoTask.removeField("tasks");
-							System.out.println("\n\nADDED PARENT ROW NO TASK ");
-							System.out.println(",");
-							System.out.println("name : " + parentRowNoTask.get("name"));
-							System.out.println("id : " + parentRowNoTask.get("id"));
-							out.print(",");
-							out.print(parentRowNoTask.toString());
-						}
 
-					} else {
+					/* } else {
 						System.out.println("\nALREADY ADDED PARENT ROW ");
-					}
-					parentRowHasTask = false;
-
-				}
+					} */
+					//parentRowHasTask = false;
 
 				//check duplicated row
-				isAdded = false;
-				String resourceRowId = resourceObj.get("id").toString();
-				for (String string : addedRow) {
-					if (string.matches(resourceRowId)) {
-						isAdded = true;
-						break;
-					}
-				}
-				if (!isAdded) {
-					addedRow.add(resourceRowId);
-					System.out.println("\nLOADING RESOURCE");
-					System.out.println(",");
-					System.out.println("name : " + resourceObj.get("name"));
-					System.out.println("id : " + resourceObj.get("id"));
-					System.out.println("parent : " + resourceObj.get("parent"));
-					out.print(",");
-					out.print(resourceObj);
 
-				}
 
-			}
-			//bug fix when project has only parent row
-			if(isOnlyParentRow){
-				tempParentRow.put("parent", projectRowId);
-				tempParentRow.put("oldParent", "");
-				tempParentRow.put("currentProject", projectName);
-				tempParentRow.removeField("_id");
-				out.print(",");
-				out.print(tempParentRow);
+			  }
+
 			}
 
 			if (cursor.hasNext()) {

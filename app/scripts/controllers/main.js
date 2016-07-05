@@ -147,7 +147,7 @@ angular.module('angularGanttDemoApp')
                 'to': '<i class="fa fa-calendar"></i> {{getHeader()}}',
                 'model.utilization': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>'
             },
-            autoExpand: 'none',
+            autoExpand: 'both',
             taskOutOfRange: 'truncate',
             fromDate: moment(null),
             toDate: undefined,
