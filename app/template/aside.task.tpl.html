@@ -1,20 +1,20 @@
 <div class="aside" tabindex="-1" role="dialog" ng-clock>
     <div class="edit-panel-wrapper">
         <div class="col-wrapper option-block">
-            <div class="col-header" style="background-color: {{asideTask.color}};">
-                {{asideRow.height===undefined?'TASK':'PLAN'}}
+            <div class="col-header" style="background-color: {{asideTask.model.color}};">
+                {{asideTask.row.model.height===undefined?'TASK':'PLAN'}}
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideTask.name">
+                    <input type="text" class="form-control" ng-model="asideTask.model.name">
                 </div>
             </div>
-            <div class="col-field-wrapper" ng-if="asideRow.height===undefined">
+            <div class="col-field-wrapper" ng-if="asideTask.row.height===undefined">
                 <div class="form-group">
                     <label>PROJECT</label>
                     <br>
-                    <button type="button" class="btn btn-default" style="width:220px;" ng-model="asideTask.project" data-html="1" data-toggle="true" bs-options="projectName.value as projectName.label for projectName in projectsName" data-placement="top-left" data-animation=""
+                    <button type="button" class="btn btn-default" style="width:220px;" ng-model="asideTask.model.project" data-html="1" data-toggle="true" bs-options="projectName.value as projectName.label for projectName in projectsName" data-placement="top-left" data-animation=""
                         data-placeholder="     " bs-select></button>
 
                 </div>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="col-wrapper option-block big" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);">
-            <div class="col-header" style="background-color: {{asideTask.color}};">
+            <div class="col-header" style="background-color: {{asideTask.model.color}};">
                 TIMING
             </div>
             <div class="col-field-wrapper">
@@ -50,25 +50,25 @@
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-calendar"></i> START</label>
                     </br>
-                    <input type="text" class="form-control" ng-model="asideTask.from" max-date="{{options.toDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="From"
+                    <input type="text" class="form-control" ng-model="asideTask.model.from" max-date="{{options.toDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="From"
                         bs-datepicker>
 
                 </div>
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-clock-o"></i> </label>
                     </br>
-                    <input type="text" size="8" class="form-control" ng-model="asideTask.from" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    <input type="text" size="8" class="form-control" ng-model="asideTask.model.from" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
                 </div>
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-calendar"></i> END</label>
                     </br>
-                    <input type="text" class="form-control" ng-model="asideTask.to" min-date="{{options.fromDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To"
+                    <input type="text" class="form-control" ng-model="asideTask.model.to" min-date="{{options.fromDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To"
                         bs-datepicker>
                 </div>
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-clock-o"></i> </label>
                     </br>
-                    <input type="text" size="8" class="form-control" ng-model="asideTask.to" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
+                    <input type="text" size="8" class="form-control" ng-model="asideTask.model.to" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
                 </div>
 
 
@@ -76,7 +76,7 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label class="control-label">TASK ID</label>
-                    <input type="text" class="form-control" ng-model="asideTask.id" style="width:300px;">
+                    <input type="text" class="form-control" ng-model="asideTask.model.id" style="width:300px;">
                 </div>
 
 
@@ -84,7 +84,7 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label class="control-label">ROW ID</label>
-                    <input type="text" class="form-control" ng-model="asideRow.id" style="width:300px;">
+                    <input type="text" class="form-control" ng-model="asideTask.row.id" style="width:300px;">
                 </div>
             </div>
             <!-- <div class="col-field-wrapper">
@@ -112,7 +112,7 @@
             </div> -->
         </div>
         <div class="col-wrapper option-block big">
-            <div class="col-header" style="background-color: {{asideTask.color}};">
+            <div class="col-header" style="background-color: {{asideTask.model.color}};">
                 CUSTOM DATA FIELDS
             </div>
 
@@ -120,14 +120,14 @@
                 <div class="form-group">
                     <label>PRIORITY</label>
                     <br>
-                    <button type="button" class="btn btn-default" ng-model="asideTask.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation=""
+                    <button type="button" class="btn btn-default" ng-model="asideTask.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation=""
                         data-placeholder="     " bs-select></button>
 
                 </div>
                 <div class="form-group">
                     <label>TYPE</label>
                     <br>
-                    <button type="button" class="btn btn-default" ng-model="asideTask.type" data-html="1" data-toggle="true" bs-options="type.value as type.label for type in types" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+                    <button type="button" class="btn btn-default" ng-model="asideTask.model.type" data-html="1" data-toggle="true" bs-options="type.value as type.label for type in types" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
 
                 </div>
 
@@ -135,17 +135,17 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>SUPERVISOR</label>
-                    <input type="text" class="form-control" ng-model="asideTask.supervisor">
+                    <input type="text" class="form-control" ng-model="asideTask.model.supervisor">
                 </div>
                 <div class="form-group">
                     <label>MARKETING</label>
-                    <input type="text" class="form-control" ng-model="asideTask.marketing">
+                    <input type="text" class="form-control" ng-model="asideTask.model.marketing">
                 </div>
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>MANDAY</label>
-                    <input type="text" class="form-control" ng-model="asideTask.manday">
+                    <input type="text" class="form-control" ng-model="asideTask.model.manday">
                 </div>
             </div>
 
@@ -184,13 +184,13 @@
         </div>
         <div class="col-wrapper button-block" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);width:22%;">
             <!-- bug row span-->
-            <div class="col-header" style="background-color: {{asideTask.color}};">
+            <div class="col-header" style="background-color: {{asideTask.model.color}};">
 
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.from,asideTask.to)" ng-model="button.save" ng-click="taskSave(asideRow,asideTask,'save');$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideRow,asideTask);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideTask.row,asideTask);$hide()" bs-checkbox>Delete</button>
                     <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>

@@ -7,20 +7,20 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideRow.name" >
+                    <input type="text" class="form-control" ng-model="asideRow.model.name" >
                 </div>
 
             </div>
             <div class="col-field-wrapper">
               <div class="form-group">
                   <label>PARENT</label>
-                  <input type="text" class="form-control"  ng-model="asideRow.parent" style="width:300px;" >
+                  <input type="text" class="form-control"  ng-model="asideRow.model.parent" style="width:300px;" >
               </div>
             </div>
             <div class="col-field-wrapper">
               <div class="form-group">
                   <label>ID</label>
-                  <input type="text" class="form-control"  ng-model="asideRow.id" style="width:300px;" >
+                  <input type="text" class="form-control"  ng-model="asideRow.model.id" style="width:300px;" >
               </div>
             </div>
         </div>
@@ -31,13 +31,13 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>TEL</label>
-                    <input type="text" class="form-control" ng-model="asideRow.tel">
+                    <input type="text" class="form-control" ng-model="asideRow.model.tel">
                 </div>
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>EMAIL</label>
-                    <input type="text" class="form-control" ng-model="asideRow.email">
+                    <input type="text" class="form-control" ng-model="asideRow.model.email">
                 </div>
             </div>
             <!-- <div class="col-field-wrapper">
@@ -68,7 +68,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideRow);$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(asideRow);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-if="asideRow.rid!=='0'" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-if="isNewResource" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>

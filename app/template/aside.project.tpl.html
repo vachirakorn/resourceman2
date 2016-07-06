@@ -1,19 +1,19 @@
 <div class="aside" tabindex="-1" role="dialog" ng-clock>
     <div class="edit-panel-wrapper">
         <div class="col-wrapper" style="width: 25%;">
-            <div class="col-header" style="background-color: {{asideProjectRow.color}};">
+            <div class="col-header" style="background-color: {{asideProject.model.color}};">
                 PROJECT
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideProjectRow.name" >
+                    <input type="text" class="form-control" ng-model="asideProject.model.name" >
                 </div>
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>ID</label>
-                    <input type="text" class="form-control" ng-model="asideProjectRow.id" style="width:300px;" >
+                    <input type="text" class="form-control" ng-model="asideProject.model.id" style="width:300px;" >
                 </div>
             </div>
             <div class="col-field-wrapper">
@@ -36,13 +36,13 @@
         </div>
 
         <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width: 25%;">
-            <div class="col-header" style="background-color: {{asideProjectRow.color}};">
+            <div class="col-header" style="background-color: {{asideProject.model.color}};">
                 CUSTOM DATA FIELDS
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group" >
                     <label>PRIORITY</label><br>
-                    <button type="button" class="btn btn-default" ng-model="asideProjectRow.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+                    <button type="button" class="btn btn-default" ng-model="asideProject.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
 
                 </div>
 
@@ -50,13 +50,13 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>BUDGET.฿</label>
-                    <input type="text" class="form-control" ng-model="asideProjectRow.budget">
+                    <input type="text" class="form-control" ng-model="asideProject.model.budget">
                 </div>
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>MANAGER</label>
-                    <input type="text" class="form-control" ng-model="asideProjectRow.manager">
+                    <input type="text" class="form-control" ng-model="asideProject.model.manager">
                 </div>
             </div>
 
@@ -81,14 +81,14 @@
             </div> -->
         </div>
         <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width:50%;">
-            <div class="col-header" style="background-color: {{asideProjectRow.color}};">
+            <div class="col-header" style="background-color: {{asideProject.model.color}};">
 
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="projectSave(asideProjectRow);$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="projectDelete(asideProjectRow);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-if="asideProjectRow.rid!=='0'" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="projectSave(asideProject,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="projectDelete(asideProject);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default" ng-if="isNewProjectRow" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>
