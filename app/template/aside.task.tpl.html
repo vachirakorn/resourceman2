@@ -84,32 +84,9 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label class="control-label">ROW ID</label>
-                    <input type="text" class="form-control" ng-model="asideTask.row.id" style="width:300px;">
+                    <input type="text" class="form-control" ng-model="asideTask.row.model.id" style="width:300px;">
                 </div>
             </div>
-            <!-- <div class="col-field-wrapper">
-                <div class="form-group">
-                    <label>RESOURCE GROUP</label></br>
-                    <select ui-select2 ng-model="group" data-placeholder="select" style="width:100px;">
-                        <option value=""></option>
-                        <option value="people">People</option>
-                        <option value="tools">Tools</option>
-                        <option value="vehicles">Vehicles</option>
-                    </select>
-                </div>
-            </div> -->
-
-            <!-- <div class="col-field-wrapper">
-                <div class="form-group">
-                    <label>SKILLSET</label></br>
-                    <select ui-select2 ng-model="skillset"  data-placeholder="select" style="width:100px;">
-                        <option value=""></option>
-                        <option value="1"></option>
-                        <option value="2">Marketing</option>
-                        <option value="3"></option>
-                    </select>
-                </div>
-            </div> -->
         </div>
         <div class="col-wrapper option-block big">
             <div class="col-header" style="background-color: {{asideTask.model.color}};">
@@ -120,14 +97,14 @@
                 <div class="form-group">
                     <label>PRIORITY</label>
                     <br>
-                    <button type="button" class="btn btn-default" ng-model="asideTask.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation=""
+                    <button type="button" class="btn btn-default" ng-model="asideTask.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in selector.priorityLevels" data-placement="top-right" data-animation=""
                         data-placeholder="     " bs-select></button>
 
                 </div>
                 <div class="form-group">
                     <label>TYPE</label>
                     <br>
-                    <button type="button" class="btn btn-default" ng-model="asideTask.model.type" data-html="1" data-toggle="true" bs-options="type.value as type.label for type in types" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+                    <button type="button" class="btn btn-default" ng-model="asideTask.model.type" data-html="1" data-toggle="true" bs-options="type.value as type.label for type in selector.types" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
 
                 </div>
 
@@ -191,7 +168,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideTask.row,asideTask);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-if="!asideTask.model.isNew" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>

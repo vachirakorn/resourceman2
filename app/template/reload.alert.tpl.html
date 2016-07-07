@@ -1,0 +1,4 @@
+<div class="alert" ng-class="[type ? 'alert-' + type : null]">
+  <button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
+  <span ng-bind-html="content"></span><button class="btn btn-default" ng-click="reload()">Reload</button>
+</div>

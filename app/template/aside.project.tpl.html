@@ -42,7 +42,7 @@
             <div class="col-field-wrapper">
                 <div class="form-group" >
                     <label>PRIORITY</label><br>
-                    <button type="button" class="btn btn-default" ng-model="asideProject.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in priorityLevels" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
+                    <button type="button" class="btn btn-default" ng-model="asideProject.model.priorityLevel" data-html="1" data-toggle="true" bs-options="priorityLevel.value as priorityLevel.label for priorityLevel in selector.priorityLevels" data-placement="top-right" data-animation="" data-placeholder="     " bs-select></button>
 
                 </div>
 
@@ -88,7 +88,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="projectSave(asideProject,'save');$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="projectDelete(asideProject);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-if="isNewProjectRow" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-if="!asideProject.model.isNew" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>

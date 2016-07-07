@@ -98,17 +98,17 @@
 	} else if (mode.equals("taskSave")) {
 
 		String resourceRowId = request.getParameter("id");
-		//BasicDBObject tasksObjArr = new BasicDBObject() ;
 		String tasks = request.getParameter("tasks");
 
 		System.out.println("\nTASK SAVE");
 		System.out.println("tasks: " + JSON.parse(tasks));
 		System.out.println("SAVE TO ROW ID: " + resourceRowId);
+
 		BasicDBObject update = new BasicDBObject();
 		update.append("$set", new BasicDBObject().append("tasks", JSON.parse(tasks)));
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
-
 		DBObject findRowID = project.findOne(query);
+
 		if (findRowID == null) {
 			System.out.println("SAVE IN RESOURCE");
 			resource.update(query, update);
@@ -121,62 +121,38 @@
 
 		String row = request.getParameter("row");
 		DBObject rowObj = (DBObject) JSON.parse(row);
+
 		String name = rowObj.get("name").toString();
 		String resourceRowId = rowObj.get("id").toString();
-		/* if (resourceRowId.equals("0") && resource.findOne(new BasicDBObject("name", name)) != null) {
-			System.out.println("error duplicate resource name");
-			out.print("duplicate resource name exists");
-		} else { */
 
 		rowObj.removeField("oldParent");
 		rowObj.removeField("oldId");
 		rowObj.removeField("currentProject");
 
-		//rowObj.removeField("parent");
 
-		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		System.out.println("\nRESOURCE SAVE");
 		System.out.println("rowObj: " + rowObj.toString());
 		System.out.println("RESOURCE ID: " + resourceRowId);
-		/* if (resourceRowId.equals("0")) {
-			BasicDBObject query = new BasicDBObject().append("id","0");
-			resource.update(query, update, true, false); //upsert
-			DBCursor cursor = resource.find(new BasicDBObject()).sort(new BasicDBObject("_id", -1))
-					.limit(1);
-			DBObject newrow = cursor.next();
-			String id = newrow.get("id");
-			System.out.println("RESPONSE NEW ROWID : " + id.toString());
-			out.print(id.toString());
-		} else { */
+
+		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
 		resource.update(query, update, true, false); //upsert
-		//}
-		//}
+
 
 	} else if (mode.equals("projectSave")) {
 
 		String row = request.getParameter("row");
 		DBObject rowObj = (DBObject) JSON.parse(row);
 		String projectRowId = rowObj.get("id").toString();
-		//rowObj.removeField("id");
-		//rowObj.removeField("id");
 
-		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		System.out.println("\nPROJECT SAVE");
 		System.out.println("projectRowObj: " + rowObj.toString());
 		System.out.println("PROJECT ID: " + projectRowId);
-		/* 	if (projectRowId.equals("0")) {
-				BasicDBObject query = new BasicDBObject().append("_id", new ObjectId());
-				project.update(query, update, true, false); //upsert
-				DBCursor cursor = project.find(new BasicDBObject()).sort(new BasicDBObject("_id", -1)).limit(1);
-				DBObject newrow = cursor.next();
-				ObjectId pid = (ObjectId) newrow.get("_id");
-				System.out.println("RESPONSE NEW PROJECT ROWID : " + pid.toString());
-				out.print(pid.toString());
-			} else { */
+
+		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		BasicDBObject query = new BasicDBObject().append("id", projectRowId);
 		project.update(query, update, true, false); //upsert
-		//}
+
 
 	} else if (mode.equals("projectLoad")) {
 
@@ -184,8 +160,6 @@
 		BasicDBObject data = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
 		ArrayList<String> addedRow = new ArrayList<String>();
-
-		//fields.put("_id", 0);
 
 		DBCursor cursor = project.find(data, fields);
 		cursor.sort(new BasicDBObject("order", 1)); //sort by "projectOrder" field in ascending order

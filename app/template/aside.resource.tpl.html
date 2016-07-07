@@ -68,7 +68,7 @@
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideRow);$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(asideRow);$hide()" bs-checkbox>Delete</button>
-                    <button type="button" class="btn btn-default" ng-if="isNewResource" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-if="!asideRow.model.isNew" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
             </div>
