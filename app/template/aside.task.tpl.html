@@ -167,7 +167,7 @@
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideTask.row,asideTask);$hide()" bs-checkbox>Delete</button>
+                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideTask);$hide()" bs-checkbox>Delete</button>
                     <button type="button" class="btn btn-default" ng-model="button.cancel" ng-if="!asideTask.model.isNew" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>

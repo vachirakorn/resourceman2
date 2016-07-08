@@ -29,15 +29,15 @@
                 CUSTOM DATA FIELDS
             </div>
             <div class="col-field-wrapper">
-                <div class="form-group">
+                <div class="form-group" ng-if="asideRow.model.tel!==undefined">
                     <label>TEL</label>
-                    <input type="text" class="form-control" ng-model="asideRow.model.tel">
+                    <input type="text" class="form-control"  ng-model="asideRow.model.tel">
                 </div>
             </div>
             <div class="col-field-wrapper">
-                <div class="form-group">
+                <div class="form-group" ng-if="asideRow.model.email!==undefined">
                     <label>EMAIL</label>
-                    <input type="text" class="form-control" ng-model="asideRow.model.email">
+                    <input type="text" class="form-control"  ng-model="asideRow.model.email">
                 </div>
             </div>
             <!-- <div class="col-field-wrapper">
@@ -66,7 +66,7 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideRow);$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideRow,'save');$hide()" bs-checkbox>Save</button>
                     <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="resourceDelete(asideRow);$hide()" bs-checkbox>Delete</button>
                     <button type="button" class="btn btn-default" ng-if="!asideRow.model.isNew" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
 

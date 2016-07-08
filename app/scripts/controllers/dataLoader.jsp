@@ -202,8 +202,8 @@
 													.append("name", new BasicDBObject("$first", "$name"))
 													.append("tel", new BasicDBObject("$first", "$tel"))
 													.append("email", new BasicDBObject("$first", "$email"))
-													.append("utilization",
-															new BasicDBObject("$first", "$utilization"))
+													.append("utilization",new BasicDBObject("$first", "$utilization"))
+													.append("isSubRow",new BasicDBObject("$first", "$isSubRow"))
 													.append("tasks", new BasicDBObject("$push", "$tasks"))),
 							(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1))))
 					.results();
@@ -283,7 +283,17 @@
 	} else if (mode.equals("resourceDelete")) {
 
 		String resourceRowId = request.getParameter("id");
+		System.out.println("remove ID: "+ resourceRowId);
+
+		DBCursor cursor = resource.find(new BasicDBObject("parent",resourceRowId));
+
+		while (cursor.hasNext()) {
+			DBObject buffer = cursor.next();
+			System.out.println("remove child: "+ buffer.get("name").toString());
+			resource.remove(new BasicDBObject().append("id",buffer.get("id").toString()));
+		}
 		resource.remove(new BasicDBObject().append("id", resourceRowId));
+
 
 	} else if (mode.equals("projectDelete")) {
 
