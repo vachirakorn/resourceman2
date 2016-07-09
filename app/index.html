@@ -267,10 +267,10 @@
                                                       <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> Date range</label>
                                                       <br>
                                                       <div class="form-group">
-                                                          <input type="text" class="form-control" ng-model="options.fromDate" max-date="{{options.toDate}}" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="From" bs-datepicker>
+                                                          <input type="text" class="form-control" ng-model="options.fromDate"  data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="From" bs-datepicker>
                                                       </div>
                                                       <div class="form-group">
-                                                          <input type="text" class="form-control" ng-model="options.toDate" min-date="{{options.fromDate}}" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="To" bs-datepicker>
+                                                          <input type="text" class="form-control" ng-model="options.toDate" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="To" bs-datepicker>
                                                       </div>
                                                   </div>
                                                   <div ng-if="options.sideMode === 'Tree' || options.sideMode === 'TreeTable'" class="form-group text-center">
@@ -400,13 +400,15 @@
         <script src="../bower_components/jsPlumb/dist/js/jsPlumb-2.0.7.js"></script>
         <script src="../bower_components/tinycolor/tinycolor.js"></script>
         <script src="../bower_components/angular-color-picker/dist/angularjs-color-picker.js"></script>
-        <!-- <script src="../bower_components/angular-post-fix/postfix.js"></script> -->
+
         <!-- endbower -->
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/directives/confirmDelete.js"></script>
+        <script src="scripts/directives/rowShortcut.js"></script>
         <!-- <script src="scripts/services/sample.js"></script> -->
 
         <!-- endbuild -->

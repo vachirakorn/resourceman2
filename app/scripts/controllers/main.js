@@ -48,6 +48,7 @@ angular.module('angularGanttDemoApp')
             templateUrl: 'template/reload.alert.tpl.html'
         });
 
+
         // Event handler
         var logScrollEvent = function(left, date, direction) {
             if (date !== undefined) {
@@ -113,7 +114,7 @@ angular.module('angularGanttDemoApp')
             scale: 'day',
             sortMode: undefined,
             sideMode: 'TreeTable',
-            daily: true,
+            daily: false,
             maxHeight: false,
             width: false,
             zoom: 1,
@@ -156,14 +157,14 @@ angular.module('angularGanttDemoApp')
                 'model.utilization': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>'
             },
             autoExpand: 'both',
-            taskOutOfRange: 'truncate',
-            fromDate: moment(null),
-            toDate: undefined,
+            taskOutOfRange: 'expand',
+            fromDate: moment().add(-3,'week'),
+            toDate: moment().add(3,'week'),
             rowContentEnabled: true,
             taskContentEnabled: true,
             rowContent: '<i class="fa fa-{{row.model.parent===\'\'?\'plus-square-o \':\'\'}}" style=\"font-size:16px;color:#006699;\" ng-click="scope.addSubResource(row)"></i> <i class=\"fa fa-minus-square-o\" style=\"font-size:16px;color:#006699;\" ng-click=\"scope.resourceDelete(row)\"></i> <i class="fa fa-{{row.model.parent===\'\'?\'user\':\'\'}}"></i> {{row.model.name}}',
             taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
-            allowSideResizing: true,
+            allowSideResizing: false,
             labelsEnabled: true,
             currentDate: 'column',
             currentDateValue: new Date(),
@@ -216,11 +217,11 @@ angular.module('angularGanttDemoApp')
             },
             timeFramesWorkingMode: 'hidden',
             timeFramesNonWorkingMode: 'visible',
-            columnMagnet: '15 minutes',
+            columnMagnet: '1 day',
             timeFramesMagnet: true,
             dependencies: {
-                enabled: true,
-                conflictChecker: true
+                enabled: false,
+                conflictChecker: false
             },
             targetDataAddRowIndex: undefined,
             canDraw: function(event) {
@@ -389,11 +390,11 @@ angular.module('angularGanttDemoApp')
                     });
                     api.dependencies.on.add($scope, function(dependency) {
                         console.log('dependencies change');
-                        $scope.taskSave(dependency.task.row.model, dependency.task.model, 'autosave');
+                        $scope.taskSave(dependency.task, 'autosave');
                     });
                     api.dependencies.on.remove($scope, function(dependency) {
                         console.log('remove dependencies');
-                        $scope.taskSave(dependency.task.row.model, dependency.task.model, 'autosave');
+                        $scope.taskSave(dependency.task, 'autosave');
                     });
 
                     // When gantt is ready, load data.
@@ -520,7 +521,6 @@ angular.module('angularGanttDemoApp')
 
         };
         $scope.addSubResource = function(row) {
-
             event.stopPropagation();
             var rowModel = row.model;
 
@@ -561,6 +561,7 @@ angular.module('angularGanttDemoApp')
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: 'New Resource',
+                    content:'<div row-shortcut row="row" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>',
                     tel: '',
                     email: '',
                     parent: '',
@@ -583,7 +584,8 @@ angular.module('angularGanttDemoApp')
                     budget: '',
                     manager: '',
                     data: '',
-                    isNew: true
+                    isNew: true,
+                    isSubRow:true
                 });
         };
 
@@ -695,6 +697,7 @@ angular.module('angularGanttDemoApp')
                     content: 'Click reload button to update view ',
                     type: 'danger',
                     duration: '5',
+                    placement: 'bottom-right',
                     templateUrl: 'template/reload.alert.tpl.html'
                 });
                 reloadAlert.$promise.then(function() {
@@ -782,6 +785,7 @@ angular.module('angularGanttDemoApp')
         };
 
         $scope.resourceDelete = function(row) {
+          event.stopPropagation();
             var rowModel = row.model;
             //delete row offline
 
@@ -1193,10 +1197,10 @@ angular.module('angularGanttDemoApp')
                 '#f1c40f', '#e67e22', '#e74c3c', '#e678b6', '#95a5a6'
             ],
             setTaskColor: function(color) {
-                $scope.asideTask.color = color;
+                $scope.asideTask.model.color = color;
             },
             setProjectColor: function(color) {
-                $scope.asideProject.color = color;
+                $scope.asideProject.model.color = color;
             }
         };
         $scope.colorpicker = {
@@ -1211,15 +1215,18 @@ angular.module('angularGanttDemoApp')
             swatchOnly: true,
             inline: false,
             onColorChange: function($event, color) {
-                console.log($event, $scope.asideTask.color, color);
-                if ($scope.asideTask.color !== undefined) {
-                    $scope.asideTask.color = color;
-                } else if ($scope.asideProject.color !== undefined) {
-                    $scope.asideProject.color = color;
+                console.log($event, $scope.asideTask.model.color, color);
+                if ($scope.asideTask.model.color !== undefined) {
+                    $scope.asideTask.model.color = color;
+                } else if ($scope.asideProject.model.color !== undefined) {
+                    $scope.asideProject.model.color = color;
                 }
 
 
             }
         };
+
+
+
 
     }]);
