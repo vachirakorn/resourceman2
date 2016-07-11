@@ -1,10 +1,6 @@
-
 <span>
-      <i class="fa fa-{{row.model.parent===''?'plus-square-o':''}}" style="font-size:16px;color:#006699;" ng-click="add()"></i>
-      <i class="fa fa-minus-square-o" ng-hide="isDeleting" style="font-size:16px;color:#006699;" ng-click="startDelete()"></i>
-        <!-- <button type="button" class="btn btn-default" ng-click="startDelete()"><i class="fa fa-trash-o"></i> Delete</button> -->
-      <i class="fa fa-minus-square-o" ng-show="isDeleting" style="font-size:16px;color:#d9534f;" ng-click="confirm()"></i>
-        <!-- <button type="button" class="btn btn-default" ng-click="cancel()">Abort deletion</button> -->
-        <!-- <button type="button" class="btn btn-default btn-warning" ng-click="confirm()"><i class="fa fa-trash-o"></i>Confirm?</button> -->
-    {{row.model.name}}
+      <i class="{{row.model.parent===''?'fa fa-plus-square-o':''}}" style="font-size:19px;color:#006699;{{row.model.parent===''?'':'margin-left:19px;'}}" ng-click="add()"></i>
+      <i class="fa fa-minus-square-o" ng-hide="isDeleting" style="font-size:19px;color:#006699;" ng-click="startDelete()"></i>
+      <i class="fa fa-minus-square-o" ng-show="isDeleting" style="font-size:19px;color:#d9534f;" ng-click="confirm()"></i>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span>

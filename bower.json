@@ -8,7 +8,8 @@
   ],
   "description": "Gantt chart component for AngularJS - Demo",
   "dependencies": {
-    "angular": "~1.5",
+    "angular": ">=1.3",
+    "angular-moment": "~1.0.0-beta.4",
     "angular-sanitize": "~1.5",
     "angular-animate": "~1.5",
     "json3": "~3.3.1",
@@ -25,7 +26,8 @@
     "bootstrap-additions": "^0.3.1",
     "angular-motion": "^0.4.4",
     "angular-color-picker": "angularjs-color-picker#^1.1.4",
-    "angular-post-fix": "^0.1.0"
+    "angular-post-fix": "^0.1.0",
+    "angular-bootstrap-toggle-switch": "^0.5.6"
   },
   "overrides": {
     "bootstrap": {
@@ -42,7 +44,7 @@
     }
   },
   "devDependencies": {
-    "angular-mocks": "~1.5"
+    "angular-mocks": ">=1.3"
   },
   "resolutions": {
     "angular": "~1.5"

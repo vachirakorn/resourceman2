@@ -119,19 +119,19 @@ angular.module('angularGanttDemoApp')
             width: false,
             zoom: 1,
             columns: ['model.name'],
-            treeTableColumns: [],
+            treeTableColumns: ['model.name'],
             columnsHeaders: {
                 'model.name': 'Name',
                 'from': 'From',
                 'to': 'To',
-                'model.utilization': 'Utilization',
-                'model.priorityLevel': 'Priority'
+                'model.priorityLevel': 'Prioritys',
+                'model.shortcut': ''
             },
             columnsClasses: {
                 'model.name': 'gantt-column-name',
                 'from': 'gantt-column-from',
                 'to': 'gantt-column-to',
-                'model.utilization': 'gantt-column-utilization'
+                'model.shortcut': 'gantt-column-shortcut'
             },
             columnsFormatters: {
                 'from': function(from) {
@@ -154,24 +154,24 @@ angular.module('angularGanttDemoApp')
                 'model.name': '<i class="fa fa-align-justify"></i> {{getHeader()}}',
                 'from': '<i class="fa fa-calendar"></i> {{getHeader()}}',
                 'to': '<i class="fa fa-calendar"></i> {{getHeader()}}',
-                'model.utilization': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>'
+                'model.id': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>{{getHeader()}}'
             },
             autoExpand: 'both',
             taskOutOfRange: 'expand',
-            fromDate: moment().add(-3,'week'),
-            toDate: moment().add(3,'week'),
+            fromDate: moment().add(-3, 'week'),
+            toDate: moment().add(3, 'week'),
             rowContentEnabled: true,
             taskContentEnabled: true,
-            rowContent: '<i class="fa fa-{{row.model.parent===\'\'?\'plus-square-o \':\'\'}}" style=\"font-size:16px;color:#006699;\" ng-click="scope.addSubResource(row)"></i> <i class=\"fa fa-minus-square-o\" style=\"font-size:16px;color:#006699;\" ng-click=\"scope.resourceDelete(row)\"></i> <i class="fa fa-{{row.model.parent===\'\'?\'user\':\'\'}}"></i> {{row.model.name}}',
+            rowContent: '',//custom
             taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
-            allowSideResizing: false,
+            allowSideResizing: true,
             labelsEnabled: true,
             currentDate: 'column',
             currentDateValue: new Date(),
             draw: true,
             readOnly: false,
             groupDisplayMode: 'disabled',
-            projectView: false,
+            resourceView: true,
             filterTask: '',
             filterRow: '',
             timeFrames: {
@@ -233,7 +233,7 @@ angular.module('angularGanttDemoApp')
                 return {
                     id: utils.randomUuid(), // Unique id of the task.
                     name: 'New task', // Name shown on top of each task.
-                    project: 'Unassigned Project', //default project name of the task
+                    project: 'Unassigned project', //default project name of the task
                     color: '#AA8833', // Color of the task in HEX format (Optional).
                     isDrawing: true
                 };
@@ -346,13 +346,14 @@ angular.module('angularGanttDemoApp')
                     });
                     api.tasks.on.add($scope, function(task) {
                         // auto fill project name
-                        if ($scope.options.projectView && task.row.model.currentProject !== undefined)
+                        if (!$scope.options.resourceView && task.row.model.currentProject !== undefined)
                             task.model.project = task.row.model.currentProject;
 
                     });
-                    api.tasks.on.add($scope, function(task){
-                        if(task.model.isDrawing===undefined)return;
-                        task.model.isDrawing = undefined;
+                    api.tasks.on.add($scope, function(task) {
+                        //auto pop asideTask when drawing
+                        if (task.model.isDrawing === undefined || !task.model.isDrawing) return;
+
                         checkAutoSave(task.model.id);
                         $scope.taskTempModel = angular.copy(task.model);
                         $scope.asideTask = task;
@@ -360,26 +361,29 @@ angular.module('angularGanttDemoApp')
                             taskAside.show();
                         });
                         isAsideOpened = true;
+                        task.model.isDrawing = undefined;
 
                     });
                     api.rows.on.add($scope, function(row) {
-                        if (row.model.isNew===undefined || !row.model.isNew) return;
+                        if (row.model.isNew === undefined || !row.model.isNew) return;
                         console.log('autosave new added');
-                        row.model.isNew = undefined;
+                        //row.model.isNew = undefined;
                         checkAutoSave();
                         if (row.model.height === undefined) {
                             $scope.rowTempModel = angular.copy(row.model);
                         } else if (row.model.height !== undefined) {
                             $scope.projectTempModel = angular.copy(row.model);
                         }
-                        $scope.asideRow = row;
-                        if ($scope.options.projectView) {
+
+                        if (!$scope.options.resourceView) {
+                          $scope.asideProject = row;
                             $scope.projectSave(row, 'autosave');
                             projectAside.$promise.then(function() {
                                 projectAside.show();
                             });
                             isAsideOpened = true;
                         } else {
+                          $scope.asideRow = row; //TODO:CHANGE NAME TO asideResource
                             $scope.resourceSave(row, 'autosave');
                             resourceAside.$promise.then(function() {
                                 resourceAside.show();
@@ -415,6 +419,7 @@ angular.module('angularGanttDemoApp')
                                 checkAutoSave(directiveScope.task.model.id);
 
                                 $scope.asideTask = directiveScope.task
+
                                 taskAside.$promise.then(function() {
                                     taskAside.show();
                                 });
@@ -428,6 +433,8 @@ angular.module('angularGanttDemoApp')
 
                         } else if (directiveName === 'ganttRowLabel') {
                             element.unbind();
+
+
                             element.bind('click', function() {
                                 event.stopPropagation();
                                 logRowEvent('row-label-click', directiveScope.row);
@@ -451,12 +458,13 @@ angular.module('angularGanttDemoApp')
                                 }
 
                             });
+
                             element.bind('mousedown touchstart', function() {
                                 event.stopPropagation();
 
                                 if (directiveScope.row.model.height === undefined) {
                                     $scope.rowTempModel = angular.copy(directiveScope.row.model);
-                                } else if (directiveScope.row.model.height !== undefined) {
+                                } else if (directiveScope.row.model.height !== undefined && directiveScope.row.model.editable) {
                                     $scope.projectTempModel = angular.copy(directiveScope.row.model);
                                 }
 
@@ -475,7 +483,7 @@ angular.module('angularGanttDemoApp')
         var checkAutoSave = function(focusObjId) {
             console.log('check : ' + isAsideOpened);
             //ignore self-click
-            if(focusObjId===tmpFocusObjId)return;
+            if (focusObjId === tmpFocusObjId) return;
             else tmpFocusObjId = focusObjId;
 
             if (!isAsideOpened) return;
@@ -508,7 +516,7 @@ angular.module('angularGanttDemoApp')
         };
 
         var getLastOrder = function(type) {
-          if($scope.data.length==0)return 0;
+            if ($scope.data.length == 0) return 0;
             console.log('lastOrder: ' + $scope.data[$scope.data.length - 1].order);
             var maxx = -99999;
             for (var i = $scope.data.length - 1; i >= 0; i--) {
@@ -524,30 +532,37 @@ angular.module('angularGanttDemoApp')
             event.stopPropagation();
             var rowModel = row.model;
 
-            if ($scope.options.projectView) {
+            if (!$scope.options.resourceView) {
                 $scope.data.push({
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
-                    content:'<i class=\"fa fa-minus-square-o\" style=\"font-size:16px;color:#006699;margin-left:15px;\" ng-click=\"scope.resourceDelete(row)\"></i> {{row.model.name}}',
+                    content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    columnKeys: ['model.shortcut'],
+                    columnContents: {
+                        'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
+                    },
                     tel: undefined,
                     email: undefined,
                     parent: rowModel.id,
                     oldParent: rowModel.oldParent,
                     isNew: true,
-                    isSubRow:true
+                    isSubRow: true
                 });
             } else {
                 $scope.data.push({
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
-                    content:'<i class=\"fa fa-minus-square-o\" style=\"font-size:16px;color:#006699;margin-left:15px;\" ng-click=\"scope.resourceDelete(row)\"></i> {{row.model.name}}',
-                    tel: undefined,
+                    content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    columnKeys: ['model.shortcut'],
+                    columnContents: {
+                        'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
+                    },tel: undefined,
                     email: undefined,
                     parent: rowModel.id,
                     isNew: true,
-                    isSubRow:true
+                    isSubRow: true
                 });
             }
 
@@ -556,50 +571,80 @@ angular.module('angularGanttDemoApp')
         $scope.addResource = function() {
 
             //add a new resource to the view
-            if (!$scope.options.projectView)
+            if ($scope.options.resourceView)
                 $scope.data.push({
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
-                    name: 'New Resource',
-                    content:'<div row-shortcut row="row" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>',
+                    name: 'New Resource '+(getLastOrder('resource')+1),
+                    content: '<i class=\"{{(row.model.parent===\'\')?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    columnKeys: ['model.shortcut'],
+                    columnContents: {
+                        'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
+                    },
                     tel: '',
                     email: '',
                     parent: '',
                     isNew: true,
-                    isSubRow:false
+                    isSubRow: false
                 });
 
         };
 
         $scope.addProject = function() {
 
-            if ($scope.options.projectView)
+            if (!$scope.options.resourceView)
                 $scope.data.push({
                     id: utils.randomUuid(),
                     name: 'New Project',
                     order: getLastOrder('project') + 1,
                     height: '3em',
+                    content:'<i class=\"fa fa-' + '{{row.model.priorityLevel===\'critical\'? \'exclamation-triangle\':row.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{row.model.name}}',
                     classes: 'gantt-row-milestone',
                     color: '#45607D',
                     budget: '',
                     manager: '',
                     data: '',
                     isNew: true,
-                    isSubRow:true
+                    isSubRow: false,
+                    editable:true
                 });
         };
 
+        //BUG FIXED MONGODB NOT SUPPORT KEY WITH SPECIALIAL CHARACTERS LIKE DOT(.) OR $
+        var encodeKey = function(str) {
+            return str.replace("\\", "\\\\").replace("\$", "\\u0024").replace(".", "\\u002e")
+        }
+        var decodeKey = function(str) {
+            return str.replace("\\u002e", ".").replace("\\u0024", "\$").replace("\\\\", "\\")
+        }
 
+        var renameKey =function (obj, oldName, newName) {
+            if (!obj.hasOwnProperty(oldName)) {
+                return false;
+            }
+
+            obj[newName] = obj[oldName];
+            delete obj[oldName];
+            return true;
+        }
         $scope.resourceSave = function(row, type) {
             var rowModel = row.model;
+            //bug fix scope link in view
             var tempRowModel = angular.copy(rowModel);
-            if ($scope.options.projectView) {
+
+            if (!$scope.options.resourceView) {
                 if (rowModel.oldId !== undefined)
                     tempRowModel.id = rowModel.oldId;
                 if (rowModel.oldParent !== undefined)
                     tempRowModel.parent = rowModel.oldParent;
             } else
                 tempRowModel.id = rowModel.id;
+
+            //bug fix mongoDB not support dot(.) or ($) in map key
+            for (var i = 0; i < tempRowModel.columnKeys.length; i++) {
+                renameKey(tempRowModel.columnContents,tempRowModel.columnKeys[i],encodeKey(tempRowModel.columnKeys[i]));
+                tempRowModel.columnKeys[i] = encodeKey(tempRowModel.columnKeys[i]);
+            }
 
 
             console.log("SEND : " + JSON.stringify(tempRowModel));
@@ -635,6 +680,7 @@ angular.module('angularGanttDemoApp')
                 saveAlert.$promise.then(function() {
                     saveAlert.show();
                 });
+                row.model.isNew = false;
 
             }, function myError(response) {
                 console.log('[LOG] fail to save the row');
@@ -650,13 +696,14 @@ angular.module('angularGanttDemoApp')
             var rowModel = row.model;
             var rowModelId;
             var tempRowModel = angular.copy(rowModel);
-            if ($scope.options.projectView && rowModel.oldId !== undefined)
+            if (!$scope.options.resourceView && rowModel.oldId !== undefined)
                 tempRowModel.id = rowModel.oldId;
 
             tempRowModel.oldId = undefined;
             tempRowModel.oldParent = undefined;
 
             console.log("send: " + JSON.stringify(tempRowModel));
+
             $http({
                 method: 'POST',
                 url: 'scripts/controllers/dataLoader.jsp',
@@ -670,6 +717,18 @@ angular.module('angularGanttDemoApp')
 
             }).then(function mySuccess(response) {
                 console.log('[LOG] project successfully saved');
+                if(response.data.trim() === 'DUPLICATED'){
+                  saveAlert = $alert({
+                      title: tempRowModel.name,
+                      content: 'Project name already exists!',
+                      type: 'danger',
+
+                  });
+                  saveAlert.$promise.then(function() {
+                      saveAlert.show();
+                  });
+                    return;
+                }
 
                 if (type === 'autosave') {
                     saveAlert = $alert({
@@ -697,12 +756,14 @@ angular.module('angularGanttDemoApp')
                     content: 'Click reload button to update view ',
                     type: 'danger',
                     duration: '5',
-                    placement: 'bottom-right',
+                    placement: 'center',
                     templateUrl: 'template/reload.alert.tpl.html'
                 });
                 reloadAlert.$promise.then(function() {
                     reloadAlert.show();
                 });
+                //when saved its not new anymore
+                row.model.isNew = false;
 
             }, function myError(response) {
                 console.log('[LOG] Failed to save the project');
@@ -719,7 +780,7 @@ angular.module('angularGanttDemoApp')
             var tasks = [];
             var rowModelId;
 
-            if ($scope.options.projectView) {
+            if (!$scope.options.resourceView) {
                 for (var i = 0; i < $scope.data.length; i++) {
                     if ($scope.data[i].oldId === rowModel.oldId && $scope.data[i].tasks !== undefined) {
                         for (var j = 0; j < $scope.data[i].tasks.length; j++) {
@@ -781,24 +842,24 @@ angular.module('angularGanttDemoApp')
                     $scope.cancel('row');
 
                 });
-                isAsideOpened = false;
+            isAsideOpened = false;
         };
 
         $scope.resourceDelete = function(row) {
-          event.stopPropagation();
+            event.stopPropagation();
             var rowModel = row.model;
             //delete row offline
 
             //delete children
-            if(!rowModel.isSubRow){
-              for (var i = $scope.data.length-1; i >= 0; i--) {
-                if($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id){
-                  dataToRemove=[{
-                    'id':$scope.data[i].id
-                  }];
-                  $scope.remove();
+            if (!rowModel.isSubRow) {
+                for (var i = $scope.data.length - 1; i >= 0; i--) {
+                    if ($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id) {
+                        dataToRemove = [{
+                            'id': $scope.data[i].id
+                        }];
+                        $scope.remove();
+                    }
                 }
-              }
             }
             //delete parent
             dataToRemove = [{
@@ -810,33 +871,33 @@ angular.module('angularGanttDemoApp')
 
             //delete row online
 
-                $http({
-                    method: 'POST',
-                    url: 'scripts/controllers/dataLoader.jsp',
-                    params: {
-                        mode: 'resourceDelete',
-                        id: rowModel.id
-                    },
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+            $http({
+                method: 'POST',
+                url: 'scripts/controllers/dataLoader.jsp',
+                params: {
+                    mode: 'resourceDelete',
+                    id: rowModel.id
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
 
-                }).then(function mySuccess(response) {
-                    console.log('[LOG] rowModel successfully deleted');
-                    saveAlert = $alert({
-                        title: rowModel.name,
-                        content: ' successfully deleted!',
-                        type: 'success',
-
-                    });
-                    saveAlert.$promise.then(function() {
-                        saveAlert.show();
-                    });
-                }, function myError(response) {
-                    console.log('[LOG] Fail to delete the rowModel');
-                    $scope.cancel('row');
+            }).then(function mySuccess(response) {
+                console.log('[LOG] rowModel successfully deleted');
+                saveAlert = $alert({
+                    title: rowModel.name,
+                    content: ' successfully deleted!',
+                    type: 'success',
 
                 });
+                saveAlert.$promise.then(function() {
+                    saveAlert.show();
+                });
+            }, function myError(response) {
+                console.log('[LOG] Fail to delete the rowModel');
+                $scope.cancel('row');
+
+            });
 
             isAsideOpened = false;
 
@@ -844,7 +905,17 @@ angular.module('angularGanttDemoApp')
         $scope.projectDelete = function(row) {
             var rowModel = row.model;
 
-            //delete row offline
+            //delete children
+            if (!rowModel.isSubRow) {
+                for (var i = $scope.data.length - 1; i >= 0; i--) {
+                    if ($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id) {
+                        dataToRemove = [{
+                            'id': $scope.data[i].id
+                        }];
+                        $scope.remove();
+                    }
+                }
+            }
             dataToRemove = [{
                 'id': rowModel.id
             }];
@@ -852,33 +923,33 @@ angular.module('angularGanttDemoApp')
 
             //delete row online
 
-                $http({
-                    method: 'POST',
-                    url: 'scripts/controllers/dataLoader.jsp',
-                    params: {
-                        mode: 'projectDelete',
-                        id: rowModel.id
-                    },
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+            $http({
+                method: 'POST',
+                url: 'scripts/controllers/dataLoader.jsp',
+                params: {
+                    mode: 'projectDelete',
+                    id: rowModel.oldId
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
 
-                }).then(function mySuccess(response) {
-                    console.log('[LOG] project rowModel successfully deleted');
-                    saveAlert = $alert({
-                        title: rowModel.name,
-                        content: ' successfully deleted!',
-                        type: 'success',
-
-                    });
-                    saveAlert.$promise.then(function() {
-                        saveAlert.show();
-                    });
-                }, function myError(response) {
-                    console.log('[LOG] fail to delete the project rowModel');
-                    $scope.cancel('row');
+            }).then(function mySuccess(response) {
+                console.log('[LOG] project rowModel successfully deleted');
+                saveAlert = $alert({
+                    title: rowModel.name,
+                    content: ' successfully deleted!',
+                    type: 'success',
 
                 });
+                saveAlert.$promise.then(function() {
+                    saveAlert.show();
+                });
+            }, function myError(response) {
+                console.log('[LOG] fail to delete the project rowModel');
+                $scope.cancel('row');
+
+            });
 
             isAsideOpened = false;
 
@@ -934,7 +1005,7 @@ angular.module('angularGanttDemoApp')
             $scope.projectTemp = {};
 
             //begin load
-            if (!$scope.options.projectView) {
+            if ($scope.options.resourceView) {
                 $http({
                     method: 'POST',
                     url: 'scripts/controllers/dataLoader.jsp',
@@ -946,6 +1017,14 @@ angular.module('angularGanttDemoApp')
                     }
                 }).then(function mySuccess(response) {
                     console.log('[LOG] Successfully loaded resourcces!');
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        for (var j = 0; j < response.data[i].columnKeys.length; j++) {
+                          renameKey(response.data[i].columnContents,response.data[i].columnKeys[j],decodeKey(response.data[i].columnKeys[j]));
+                          response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
+                        }
+
+                    }
                     $scope.data = response.data;
                     $scope.getProjectsName();
                 }, function myError(response) {
@@ -964,6 +1043,20 @@ angular.module('angularGanttDemoApp')
                         'Content-Type': 'application/json'
                     }
                 }).then(function mySuccess(response) {
+
+                  for (var i = 0; i < response.data.length; i++) {
+                    if(response.data[i].height===undefined && !response.data[i].end){
+                      console.log(response.data[i].name);
+                      for (var j = 0; j < response.data[i].columnKeys.length; j++) {
+                        renameKey(response.data[i].columnContents,response.data[i].columnKeys[j],decodeKey(response.data[i].columnKeys[j]));
+                        response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
+                      }
+                    }
+
+                    else continue;
+
+                  }
+
                     var splitedProjectArr = [];
                     var tempData = [];
                     for (var i = 0; i < response.data.length; i++) {
@@ -1048,33 +1141,33 @@ angular.module('angularGanttDemoApp')
         };
 
         // Add data to target row index
-        $scope.addOverlapTaskToTargetRowIndex = function() {
-            var targetDataAddRowIndex = parseInt($scope.options.targetDataAddRowIndex);
-
-            if (targetDataAddRowIndex) {
-                var targetRow = $scope.data[$scope.options.targetDataAddRowIndex];
-
-                if (targetRow && targetRow.tasks && targetRow.tasks.length > 0) {
-                    var firstTaskInRow = targetRow.tasks[0];
-                    var copiedColor = firstTaskInRow.color;
-                    var firstTaskEndDate = firstTaskInRow.to.toDate();
-                    var overlappingFromDate = new Date(firstTaskEndDate);
-
-                    overlappingFromDate.setDate(overlappingFromDate.getDate() - 1);
-
-                    var overlappingToDate = new Date(overlappingFromDate);
-
-                    overlappingToDate.setDate(overlappingToDate.getDate() + 7);
-
-                    targetRow.tasks.push({
-                        'name': 'Overlapping',
-                        'from': overlappingFromDate,
-                        'to': overlappingToDate,
-                        'color': copiedColor
-                    });
-                }
-            }
-        };
+        // $scope.addOverlapTaskToTargetRowIndex = function() {
+        //     var targetDataAddRowIndex = parseInt($scope.options.targetDataAddRowIndex);
+        //
+        //     if (targetDataAddRowIndex) {
+        //         var targetRow = $scope.data[$scope.options.targetDataAddRowIndex];
+        //
+        //         if (targetRow && targetRow.tasks && targetRow.tasks.length > 0) {
+        //             var firstTaskInRow = targetRow.tasks[0];
+        //             var copiedColor = firstTaskInRow.color;
+        //             var firstTaskEndDate = firstTaskInRow.to.toDate();
+        //             var overlappingFromDate = new Date(firstTaskEndDate);
+        //
+        //             overlappingFromDate.setDate(overlappingFromDate.getDate() - 1);
+        //
+        //             var overlappingToDate = new Date(overlappingFromDate);
+        //
+        //             overlappingToDate.setDate(overlappingToDate.getDate() + 7);
+        //
+        //             targetRow.tasks.push({
+        //                 'name': 'Overlapping',
+        //                 'from': overlappingFromDate,
+        //                 'to': overlappingToDate,
+        //                 'color': copiedColor
+        //             });
+        //         }
+        //     }
+        // };
         $scope.handleTaskIconClick = function(taskModel) {
             alert('Icon from ' + taskModel.name + ' task has been clicked.');
         };
@@ -1122,10 +1215,8 @@ angular.module('angularGanttDemoApp')
             return 40 * zoom;
         };
         $scope.isValidData = function(from, to) {
-
             //  console.log(moment(from) < moment(to));
             return moment(from) < moment(to);
-
         };
 
 
@@ -1138,14 +1229,14 @@ angular.module('angularGanttDemoApp')
             }
         });
 
-        $scope.$watch('options.projectView', function(projectView) {
-
-            if (projectView) {
-                $scope.options.treeTableColumns = ['model.priorityLevel', 'from', 'to'];
-
+        $scope.$watch('options.resourceView', function(resourceView) {
+            console.log(resourceView);
+            if (!resourceView) {
+                $scope.options.treeTableColumns = ['model.shortcut','model.priorityLevel', 'from', 'to'];
+                $scope.selected = 'projectView';
             } else {
-                $scope.options.treeTableColumns = [];
-
+                $scope.options.treeTableColumns = ['model.shortcut'];
+                $scope.selected = 'resourceView';
             }
 
             //when start or change view

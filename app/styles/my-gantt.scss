@@ -1,47 +1,55 @@
 $light-grey: #f2f2f2;
-
-.search{
-  margin-left:10px;
+.search {
+    margin-left: 10px;
 }
-.deleteConfirmation{
-  .btn{
-    border-radius:0px;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-  }
+.deleteConfirmation {
+    .btn {
+        border-radius: 0;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    }
 }
 .dropdown-menu {
-  position: fixed;
+    position: fixed;
     z-index: 1060;
-
 }
-.color-picker-wrapper{
-  position: fixed;
-  height: 40px;
-  .color-picker-input-wrapper{
-    height: 100%;
-  }
+.color-picker-wrapper {
+    position: fixed;
+    height: 40px;
+    .color-picker-input-wrapper {
+        height: 100%;
+    }
 }
 .edit-panel-box {
     height: 200px;
     width: 100%;
-
 }
-
 .alert-success {
-  background-color: #dff0d8;
-  border-color: #468847;
-  color: #468847;
+    background-color: #dff0d8;
+    border-color: #468847;
+    color: #468847;
 }
 .alert-error {
-  background-color: #f2dede;
-  border-color: #b94a48;
-  color: #b94a48;
+    background-color: #f2dede;
+    border-color: #b94a48;
+    color: #b94a48;
 }
+.alert.center {
+  text-align: center;
+  right: 0px;
+  top: 200px;
+  left: 0px;
 
-
+  //margin-bottom: 250px;
+}
+.btn-info.active {
+    background-color: limegreen;
+    }
+.btn_red.active {
+  background-color: red;
+   }
 .aside {
     position: fixed;
-    z-index: 1049;
+    z-index: 9999;
     overflow: hidden;
     min-width: 320px;
     width: 100%;
@@ -62,76 +70,69 @@ $light-grey: #f2f2f2;
             align-items: flex-start;
             justify-content: flex-start;
             min-width: 250px;
-            &.option-block{
-              float:left;
+            &.option-block {
+                float: left;
             }
-            &.button-block{
-              overflow:hidden;
-              width:auto;
+            &.button-block {
+                overflow: hidden;
+                width: auto;
             }
-            &.big{
-              width: 500px;
+            &.big {
+                width: 500px;
             }
             height: 100%;
             .col-header {
-
                 background-color: #888;
                 color: #fff;
                 width: 100%;
                 height: 22px;
-                margin: 0px 0px 4px 0px;
+                margin: 0 0 4px;
                 padding-left: 8px;
                 font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
                 font-size: 14px;
-
                 line-height: 24px;
                 max-width: none;
                 overflow: hidden;
                 box-shadow: 0 1px 1px #999;
             }
             .col-field-wrapper {
-              display: flex;
-              flex-direction: row;
-                padding:5px 5px 0px 10px;
+                display: flex;
+                flex-direction: row;
+                padding: 5px 5px 0 10px;
                 width: 100%;
-                .form-group{
-
-                  margin-right: 5px;
-                  .color-wrapper{
-                    display: flex;
-                    flex-direction: row;
-                    overflow: hidden;
-                    justify-content: flex-start;
-                    align-items: flex-start;
-                    width: 100%;
-                      .sample-color{
+                .form-group {
+                    margin-right: 5px;
+                    .color-wrapper {
                         display: flex;
                         flex-direction: row;
                         overflow: hidden;
                         justify-content: flex-start;
                         align-items: flex-start;
-                        flex-wrap: wrap;
-
-                        .color-slot{
-                          width: 20px;
-                          height: 20px;
-                          border: 1px solid black;
+                        width: 100%;
+                        .sample-color {
+                            display: flex;
+                            flex-direction: row;
+                            overflow: hidden;
+                            justify-content: flex-start;
+                            align-items: flex-start;
+                            flex-wrap: wrap;
+                            .color-slot {
+                                width: 20px;
+                                height: 20px;
+                                border: 1px solid black;
+                            }
                         }
-                      }
-                      .custom-color{
-                        padding: 1px;
-                      }
-                  }
-                  .btn{
-                    border-radius:0px;
-                    height:28px;
-                    width:100px;
-                    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-                  }
+                        .custom-color {
+                            padding: 1px;
+                        }
+                    }
+                    .btn {
+                        border-radius: 0;
+                        height: 28px;
+                        width: 100px;
+                        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+                    }
                 }
-
-
-
             }
         }
     }

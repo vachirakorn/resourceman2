@@ -224,12 +224,7 @@
                                                             <button class="btn btn-default" ng-click="addOverlapTaskToTargetRowIndex()">Add</button>
                                                         </div>
                                                     </div> -->
-                                                    <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-pencil-square-o"></i> Views</label>
-                                                        <br>
-                                                        <!-- <button type="button" class="btn btn-default" ng-model="!options.projectView" ng-click="load()" bs-checkbox>Resource</button> -->
-                                                        <button type="button" class="btn btn-default" ng-model="options.projectView" bs-checkbox>Project</button>
-                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -253,44 +248,57 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="form-inline">
-                                                  <div class="form-group input-append text-center">
-                                                      <label class="control-label"><i class="fa fa-filter"></i> Filter Tasks</label>
+                                                  <div class="form-group text-center">
+                                                      <label class="control-label"><i class="fa fa-user-plus"></i> Resources</label>
                                                       <br>
-                                                      <input type="text" class="form-control" style="width: 8em; text-align: left" ng-model="options.filterTask">
-                                                  </div>
-                                                  <div class="form-group input-append text-center">
-                                                      <label class="control-label"><i class="fa fa-filter"></i> Filter Rows</label>
-                                                      <br>
-                                                      <input type="text" class="form-control" style="width: 8em; text-align: left" ng-model="options.filterRow">
+                                                      <button type="button" class="btn btn-default" ng-disabled="options.projectView" ng-click="addResource()">+Add new</button>
                                                   </div>
                                                   <div class="form-group text-center">
-                                                      <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> Date range</label>
+                                                      <label class="control-label"><i class="fa fa-briefcase"></i> Project</label>
                                                       <br>
-                                                      <div class="form-group">
-                                                          <input type="text" class="form-control" ng-model="options.fromDate"  data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="From" bs-datepicker>
-                                                      </div>
-                                                      <div class="form-group">
-                                                          <input type="text" class="form-control" ng-model="options.toDate" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="To" bs-datepicker>
-                                                      </div>
+                                                      <button type="button" class="btn btn-default" ng-disabled="options.resourceView" ng-click="addProject()">+Add project</button>
                                                   </div>
-                                                  <div ng-if="options.sideMode === 'Tree' || options.sideMode === 'TreeTable'" class="form-group text-center">
-                                                      <label class="control-label"><i class="fa fa fa-chevron-circle-right"></i> Tree actions</label>
+                                                  <div class="form-group text-center">
+                                                      <label class="control-label"><i class="fa fa-pencil-square-o"></i> Views</label>
                                                       <br>
-                                                      <div class="btn-group">
-                                                          <button class="btn btn-default" ng-click="expandAll()">Expand all</button>
-                                                          <button class="btn btn-default" ng-click="collapseAll()">Collapse all</button>
-                                                      </div>
+                                                      <!-- <button type="button" class="btn btn-default" ng-model="!options.projectView" ng-click="load()" bs-checkbox>Resource</button> -->
+                                                      <label  class="btn btn-default btn-info {{selected==='resourceView'?'active':''}}">
+                                                          <input ng-value="true" type="radio"  ng-click="selected = 'resourceView'" data-ng-model="options.resourceView">Resource View
+                                                      </label>
+                                                      <label class="btn btn-default btn-info {{selected==='projectView'?'active':''}}">
+                                                          <input ng-value="false" type="radio" ng-click="selected = 'projectView'" data-ng-model="options.resourceView">Project View
+                                                      </label>
+
                                                   </div>
-                                                    <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-user-plus"></i> Resources/Row</label>
+                                                    <div class="form-group input-append text-center">
+                                                        <label class="control-label"><i class="fa fa-filter"></i> Filter Tasks</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-disabled="options.projectView" ng-click="addResource()">+Add new</button>
+                                                        <input type="text" class="form-control" style="width: 8em; text-align: left" ng-model="options.filterTask">
+                                                    </div>
+                                                    <div class="form-group input-append text-center">
+                                                        <label class="control-label"><i class="fa fa-filter"></i> Filter Rows</label>
+                                                        <br>
+                                                        <input type="text" class="form-control" style="width: 8em; text-align: left" ng-model="options.filterRow">
                                                     </div>
                                                     <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-briefcase"></i> Project</label>
+                                                        <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> Date range</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-disabled="!options.projectView" ng-click="addProject()">+Add project</button>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" ng-model="options.fromDate" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="From" bs-datepicker>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" ng-model="options.toDate" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" start-week="1" placeholder="To" bs-datepicker>
+                                                        </div>
                                                     </div>
+                                                    <div ng-if="options.sideMode === 'Tree' || options.sideMode === 'TreeTable'" class="form-group text-center">
+                                                        <label class="control-label"><i class="fa fa fa-chevron-circle-right"></i> Tree actions</label>
+                                                        <br>
+                                                        <div class="btn-group">
+                                                            <button class="btn btn-default" ng-click="expandAll()">Expand all</button>
+                                                            <button class="btn btn-default" ng-click="collapseAll()">Collapse all</button>
+                                                        </div>
+                                                    </div>
+
 
                                                     <!-- <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-tasks"></i> Task</label>
@@ -330,7 +338,7 @@
                                                     contents="options.columnsContents" header-contents="options.columnsHeaderContents">
                                                 </gantt-table>
                                                 <gantt-groups enabled="options.groupDisplayMode === 'group' || options.groupDisplayMode === 'overview' || options.groupDisplayMode === 'promote'" display="options.groupDisplayMode"></gantt-groups>
-                                                <gantt-tooltips></gantt-tooltips>
+                                                <gantt-tooltips date-format="'MMMM DD'"></gantt-tooltips>
                                                 <gantt-bounds></gantt-bounds>
                                                 <gantt-progress></gantt-progress>
                                                 <gantt-sortable></gantt-sortable>
@@ -400,6 +408,8 @@
         <script src="../bower_components/jsPlumb/dist/js/jsPlumb-2.0.7.js"></script>
         <script src="../bower_components/tinycolor/tinycolor.js"></script>
         <script src="../bower_components/angular-color-picker/dist/angularjs-color-picker.js"></script>
+      
+
 
         <!-- endbower -->
         <!-- endbuild -->
@@ -409,6 +419,7 @@
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/directives/confirmDelete.js"></script>
         <script src="scripts/directives/rowShortcut.js"></script>
+
         <!-- <script src="scripts/services/sample.js"></script> -->
 
         <!-- endbuild -->

@@ -1,4 +1,4 @@
-<div class="aside" tabindex="-1" role="dialog" ng-clock>
+<div class="aside" tabindex="-1" role="dialog" ng-clock style="">
     <div class="edit-panel-wrapper">
         <div class="col-wrapper" style="width: 25%;">
             <div class="col-header" style="background-color: {{asideProject.model.color}};">
@@ -7,8 +7,10 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideProject.model.name" >
+                    <input type="text" class="form-control" ng-disabled="!asideProject.model.editable" ng-model="asideProject.model.name" >
+                    <span style="color:red;">{{(asideProject.model.editable!==undefined&&!asideProject.model.editable)?'uneditable':''}}</span>
                 </div>
+
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group">
@@ -87,7 +89,7 @@
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="projectSave(asideProject,'save');$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="projectDelete(asideProject);$hide()" bs-checkbox>Delete</button>
+                    <div confirm-delete-button on-confirm="projectDelete(asideProject);$hide()"></div>
                     <button type="button" class="btn btn-default" ng-if="!asideProject.model.isNew" ng-model="button.cancel" ng-click="cancel('project');$hide()" bs-checkbox>Cancel</button>
 
                 </div>

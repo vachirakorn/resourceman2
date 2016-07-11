@@ -21,6 +21,8 @@ module.exports = function(config) {
       // bower:js
       'bower_components/es5-shim/es5-shim.js',
       'bower_components/angular/angular.js',
+      'bower_components/moment/moment.js',
+      'bower_components/angular-moment/angular-moment.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/json3/lib/json3.js',
@@ -28,8 +30,6 @@ module.exports = function(config) {
       'bower_components/angular-strap/dist/angular-strap.tpl.js',
       'bower_components/angular-native-dragdrop/draganddrop.js',
       'bower_components/angular-ui-tree/dist/angular-ui-tree.js',
-      'bower_components/moment/moment.js',
-      'bower_components/angular-moment/angular-moment.js',
       'bower_components/angular-gantt/assets/angular-gantt.js',
       'bower_components/angular-gantt/assets/angular-gantt-plugins.js',
       'bower_components/moment-range/dist/moment-range.js',
@@ -39,6 +39,7 @@ module.exports = function(config) {
       'bower_components/tinycolor/tinycolor.js',
       'bower_components/angular-color-picker/dist/angularjs-color-picker.js',
       'bower_components/angular-post-fix/postfix.js',
+      'bower_components/angular-bootstrap-toggle-switch/angular-toggle-switch.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

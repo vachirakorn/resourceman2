@@ -128,6 +128,7 @@
 		rowObj.removeField("oldParent");
 		rowObj.removeField("oldId");
 		rowObj.removeField("currentProject");
+		rowObj.put("isNew",false);
 
 
 		System.out.println("\nRESOURCE SAVE");
@@ -144,11 +145,19 @@
 		String row = request.getParameter("row");
 		DBObject rowObj = (DBObject) JSON.parse(row);
 		String projectRowId = rowObj.get("id").toString();
+		String projectName = rowObj.get("name").toString();
+
+		if(Boolean.parseBoolean(rowObj.get("isNew").toString()) && project.find(new BasicDBObject("name",projectName)).hasNext()){
+			System.out.println("\nDUPLICATED");
+			out.print("DUPLICATED");
+			return;
+		}
 
 		System.out.println("\nPROJECT SAVE");
 		System.out.println("projectRowObj: " + rowObj.toString());
 		System.out.println("PROJECT ID: " + projectRowId);
 
+		rowObj.put("isNew",false);
 		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		BasicDBObject query = new BasicDBObject().append("id", projectRowId);
 		project.update(query, update, true, false); //upsert
@@ -171,11 +180,11 @@
 			//query project
 			projectObj = cursor.next();
 
-			String projectRowRid = projectObj.get("_id").toString();
+			//String projectRowRid = projectObj.get("_id").toString();
 			String projectName = projectObj.get("name").toString();
 			String projectRowId = projectObj.get("id").toString();
 
-			projectObj.put("rid", projectRowRid);
+			//projectObj.put("rid", projectRowRid);
 			projectObj.removeField("_id");
 
 			//print out project
@@ -203,7 +212,9 @@
 													.append("tel", new BasicDBObject("$first", "$tel"))
 													.append("email", new BasicDBObject("$first", "$email"))
 													.append("utilization",new BasicDBObject("$first", "$utilization"))
-													.append("isSubRow",new BasicDBObject("$first", "$isSubRow"))
+													.append("content",new BasicDBObject("$first", "$content"))
+													.append("columnKeys",new BasicDBObject("$first", "$columnKeys"))
+													.append("columnContents",new BasicDBObject("$first", "$columnContents"))
 													.append("tasks", new BasicDBObject("$push", "$tasks"))),
 							(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1))))
 					.results();

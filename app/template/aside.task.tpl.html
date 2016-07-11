@@ -50,7 +50,7 @@
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-calendar"></i> START</label>
                     </br>
-                    <input type="text" class="form-control" ng-model="asideTask.model.from" max-date="{{options.toDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="From"
+                    <input type="text" class="form-control" ng-model="asideTask.model.from" max-date="{{options.toDate}}" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="From"
                         bs-datepicker>
 
                 </div>
@@ -62,7 +62,7 @@
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-calendar"></i> END</label>
                     </br>
-                    <input type="text" class="form-control" ng-model="asideTask.model.to" min-date="{{options.fromDate}}" data-date-format="dd-MM-yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To"
+                    <input type="text" class="form-control" ng-model="asideTask.model.to" min-date="{{options.fromDate}}" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To"
                         bs-datepicker>
                 </div>
                 <div class="form-group">
@@ -73,7 +73,7 @@
 
 
             </div>
-            <div class="col-field-wrapper">
+            <!-- <div class="col-field-wrapper">
                 <div class="form-group">
                     <label class="control-label">TASK ID</label>
                     <input type="text" class="form-control" ng-model="asideTask.model.id" style="width:300px;">
@@ -86,7 +86,7 @@
                     <label class="control-label">ROW ID</label>
                     <input type="text" class="form-control" ng-model="asideTask.row.model.id" style="width:300px;">
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="col-wrapper option-block big">
             <div class="col-header" style="background-color: {{asideTask.model.color}};">
@@ -167,7 +167,7 @@
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
                     <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
-                    <button type="button" class="btn btn-default" ng-model="button.delete" ng-click="taskDelete(asideTask);$hide()" bs-checkbox>Delete</button>
+                    <div confirm-delete-button on-confirm="taskDelete(asideTask);$hide()"></div>
                     <button type="button" class="btn btn-default" ng-model="button.cancel" ng-if="!asideTask.model.isNew" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 
                 </div>
