@@ -1,5 +1,6 @@
 
 
+<%@page import="com.mongodb.BasicDBList"%>
 <%@page import="java.net.UnknownHostException"%>
 <%@page import="com.mongodb.DBCursor"%>
 <%@page import="com.mongodb.BasicDBObject"%>
@@ -8,34 +9,32 @@
 <%@page import="com.mongodb.DB"%>
 <%@page import="com.mongodb.Mongo"%>
 <%@page import="com.mongodb.util.JSON"%>
+<%@page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 
-
-<%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
 
 <%!//connecting db method (prevent crash from multiple mongoDB connections to Mongo)
 	private static DB db = null;
-	private static final String userDB = "sttdbusr";
-	private static final String passwordDB = "C0urtr00m$";
+	// private static final String userDB = "sttdbusr";
+	// private static final String passwordDB = "C0urtr00m$";
 	private static final String dbname = "sttresourceman";
-	private static final String host = "10.23.63.25";
+	private static final String host = "localhost";
 	private static final int port = 27017;
 	private static final Integer ASCENDING = new Integer(1);
 	private static final Integer DESCENDING = new Integer(-1);
 	private static final Integer SHOW = new Integer(1);
 	private static final Integer HIDE = new Integer(1);
-
-	private static final boolean debug = true;
+	boolean debug = true;
 
 	private static DBCollection checkConnection(String collection) throws UnknownHostException {
 		if (db == null) {
 			db = (new Mongo(host, port)).getDB(dbname);
 		}
-		boolean auth = db.authenticate(userDB, passwordDB.toCharArray());
-		if(auth) {
+		//boolean auth = db.authenticate(userDB, passwordDB.toCharArray());
+		//if(auth) {
 			return db.getCollection(collection);
-		} else {
-			return null;
-		}
+	//	} else {
+	//		return null;
+	//	}
 	}
 
 	public static boolean useArraysBinarySearch(String[] arr, String targetValue) {
@@ -269,7 +268,7 @@
 				String parentRowId = resourceObj.get("parent").toString();
 
 				if (parentRowId.equalsIgnoreCase("")) {
-					//main resource row has no parent row
+					//parent row has no parentRowId
 					//NOTE : we have always found parent resource row before child resource row
 
 					resourceObj.put("parent", projectRowId);
@@ -283,20 +282,29 @@
 					}
 
 				} else {
-					//sub resource row has parent row
+					//child row has parentRowId
 					DBObject parentRowObj = resource.findOne(new BasicDBObject("id", parentRowId));
 					String parentRowObjId = parentRowObj.get("id").toString();
-					//parent row has no tasks related to project
-					if (!isAdded(addedRow, parentRowObjId)) {
+					BasicDBList resourceTasks = (BasicDBList)resourceObj.get("tasks");
+
+					//Fixed bug wasted parent row
+					//NOTE: when parent has no tasks, its child row disguise to parent row
+					if (!isAdded(addedRow, parentRowObjId) && !isAdded(addedRow, resourceRowId)) {
 
 						addedRow.add(parentRowObjId);
+						addedRow.add(resourceRowId);
 						parentRowObj.put("parent", projectRowId);
 						parentRowObj.put("oldParent", "");
 						parentRowObj.put("currentProject", projectName);
+
+						//replace parent's tasks with child's tasks
+						parentRowObj.put("tasks",resourceTasks);
+
+						//change parent's id to child's id
+						parentRowObj.put("id",resourceRowId);
+
 						parentRowObj.removeField("_id");
-						//remove tasks !
-						parentRowObj.removeField("tasks");
-if(debug){
+						if(debug){
 						System.out.println("\n\nADDED PARENT ROW NO TASK ");
 						System.out.println("name : " + parentRowObj.get("name"));
 						System.out.println("id : " + parentRowObj.get("id"));
@@ -309,7 +317,7 @@ if(debug){
 					//print sub resource row
 					if (!isAdded(addedRow, resourceRowId)) {
 						addedRow.add(resourceRowId);
-if(debug){
+						if(debug){
 						System.out.println("\nLOADING RESOURCE");
 						System.out.println("name : " + resourceObj.get("name"));
 						System.out.println("id : " + resourceObj.get("id"));

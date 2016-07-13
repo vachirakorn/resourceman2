@@ -437,9 +437,9 @@ angular.module('angularGanttDemoApp')
 
 
                         } else if (directiveName === 'ganttRowLabel') {
+                          // Disallow user to click row-label
+
                             element.unbind();
-
-
                             element.bind('click', function() {
                                 event.stopPropagation();
                                 logRowEvent('row-label-click', directiveScope.row);
@@ -447,14 +447,14 @@ angular.module('angularGanttDemoApp')
                                 //auto save if user click other rows
                                 checkAutoSave(directiveScope.row.model.id);
 
-                                if (directiveScope.row.model.height === undefined) {
+                                if (directiveScope.row.model.height === undefined && $scope.options.resourceView) {
                                     $scope.asideRow = directiveScope.row;
                                     resourceAside.$promise.then(function() {
                                         resourceAside.show();
                                     });
                                     isAsideOpened = true;
 
-                                } else if (directiveScope.row.model.height !== undefined) {
+                                } else if (directiveScope.row.model.height !== undefined ) {
                                     $scope.asideProject = directiveScope.row;
                                     projectAside.$promise.then(function() {
                                         projectAside.show();
@@ -467,7 +467,7 @@ angular.module('angularGanttDemoApp')
                             element.bind('mousedown touchstart', function() {
                                 event.stopPropagation();
 
-                                if (directiveScope.row.model.height === undefined) {
+                                if (directiveScope.row.model.height === undefined && $scope.options.resourceView) {
                                     $scope.rowTempModel = angular.copy(directiveScope.row.model);
                                 } else if (directiveScope.row.model.height !== undefined && directiveScope.row.model.editable) {
                                     $scope.projectTempModel = angular.copy(directiveScope.row.model);
