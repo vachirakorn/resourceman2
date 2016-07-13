@@ -11,6 +11,7 @@ angular.module('angularGanttDemoApp').directive('confirmDeleteButton', function(
             onConfirm: '&'
         },
         controller: ['$scope',function($scope) {
+
             $scope.isDeleting = false;
             $scope.startDelete = function() {
                 $scope.isDeleting = true;
@@ -20,6 +21,7 @@ angular.module('angularGanttDemoApp').directive('confirmDeleteButton', function(
             };
             $scope.confirm = function() {
                 $scope.onConfirm();
+
             };
         }]
 

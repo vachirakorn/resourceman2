@@ -1,4 +1,26 @@
 $light-grey: #f2f2f2;
+.gantt-task-info{
+  color:black;
+}
+.white{
+  color:white;
+}
+.gantt-row-milestone{
+  &.black{
+    color: lighten(black, 20);
+  }
+}
+
+.gantt-row-milestone{
+  &.white{
+    color: white;
+  }
+
+}
+
+.black{
+  color:lighten(black, 20);
+}
 .search {
     margin-left: 10px;
 }

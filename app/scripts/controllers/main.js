@@ -157,13 +157,13 @@ angular.module('angularGanttDemoApp')
                 'model.id': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>{{getHeader()}}'
             },
             autoExpand: 'both',
-            taskOutOfRange: 'expand',
+            taskOutOfRange: 'truncate',
             fromDate: moment().add(-3, 'week'),
             toDate: moment().add(3, 'week'),
             rowContentEnabled: true,
             taskContentEnabled: true,
-            rowContent: '',//custom
-            taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'\')?\'|\':\'\'}} {{task.model.project}}',
+            rowContent: '', //custom
+            taskContent: '<i class=\"fa fa-' + '{{task.model.priorityLevel===\'critical\'? \'exclamation-triangle\':task.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{task.model.name}} {{(task.model.project!==undefined && task.model.project!==\'Unassigned project\')?\'| \'+task.model.project:\'\'}}',
             allowSideResizing: true,
             labelsEnabled: true,
             currentDate: 'column',
@@ -220,8 +220,8 @@ angular.module('angularGanttDemoApp')
             columnMagnet: '1 day',
             timeFramesMagnet: true,
             dependencies: {
-                enabled: false,
-                conflictChecker: false
+                enabled: true,
+                conflictChecker: true
             },
             targetDataAddRowIndex: undefined,
             canDraw: function(event) {
@@ -282,6 +282,14 @@ angular.module('angularGanttDemoApp')
                     api.columns.on.generate($scope, logColumnsGenerateEvent);
 
                     api.rows.on.filter($scope, logRowsFilterEvent);
+                    api.rows.on.filter($scope, function(rows, filteredRows) {
+
+                        console.log('rows' + rows);
+                        console.log('filteredRows' + filteredRows);
+
+
+
+                    });
                     api.tasks.on.filter($scope, logTasksFilterEvent);
 
                     api.data.on.change($scope, function(newData) {
@@ -351,17 +359,21 @@ angular.module('angularGanttDemoApp')
 
                     });
                     api.tasks.on.add($scope, function(task) {
+                        var taskModel = task.model;
+                        var rowModel = task.row.model;
                         //auto pop asideTask when drawing
-                        if (task.model.isDrawing === undefined || !task.model.isDrawing) return;
 
-                        checkAutoSave(task.model.id);
-                        $scope.taskTempModel = angular.copy(task.model);
+                        if (taskModel.isDrawing === undefined || !taskModel.isDrawing) return;
+
+                        checkAutoSave(taskModel.id);
+                        $scope.taskTempModel = angular.copy(taskModel);
+                        $scope.rowTempModel = angular.copy(rowModel);
                         $scope.asideTask = task;
                         taskAside.$promise.then(function() {
                             taskAside.show();
                         });
                         isAsideOpened = true;
-                        task.model.isDrawing = undefined;
+                        taskModel.isDrawing = undefined;
 
                     });
                     api.rows.on.add($scope, function(row) {
@@ -375,18 +387,19 @@ angular.module('angularGanttDemoApp')
                             $scope.projectTempModel = angular.copy(row.model);
                         }
 
-                        if (!$scope.options.resourceView) {
-                          $scope.asideProject = row;
-                            $scope.projectSave(row, 'autosave');
-                            projectAside.$promise.then(function() {
-                                projectAside.show();
-                            });
-                            isAsideOpened = true;
-                        } else {
-                          $scope.asideRow = row; //TODO:CHANGE NAME TO asideResource
+                        if ($scope.options.resourceView) {
+                            $scope.asideRow = row; //TODO:CHANGE NAME TO asideResource
                             $scope.resourceSave(row, 'autosave');
                             resourceAside.$promise.then(function() {
                                 resourceAside.show();
+                            });
+                            isAsideOpened = true;
+
+                        } else {
+                            $scope.asideProject = row;
+                            $scope.projectSave(row, 'autosave');
+                            projectAside.$promise.then(function() {
+                                projectAside.show();
                             });
                             isAsideOpened = true;
                         }
@@ -489,30 +502,31 @@ angular.module('angularGanttDemoApp')
             if (!isAsideOpened) return;
             else if (isAsideOpened && $scope.asideRow !== undefined && $scope.asideRow.model.height === undefined) {
                 $scope.resourceSave($scope.asideRow, 'autosave');
-                hideAllAside();
+                clearAllAside();
                 $scope.asideRow = undefined;
                 isAsideOpened = false;
 
             } else if (isAsideOpened && $scope.asideRow !== undefined && $scope.asideRow.model.height !== undefined) {
                 $scope.projectSave($scope.asideProject, 'autosave');
-                hideAllAside();
+                clearAllAside();
                 $scope.asideProject = undefined;
                 isAsideOpened = false;
 
             } else if (isAsideOpened && $scope.asideTask !== undefined) {
                 $scope.taskSave($scope.asideTask, 'autosave');
-                hideAllAside();
+                clearAllAside();
                 $scope.asideTask = undefined;
                 isAsideOpened = false;
 
             }
         };
 
-        var hideAllAside = function() {
+        var clearAllAside = function() {
             resourceAside.hide();
             projectAside.hide();
             taskAside.hide();
             reloadAlert.hide();
+            $scope.rowTempModel, $scope.projectTempModel, $scope.taskTempModel = undefined;
         };
 
         var getLastOrder = function(type) {
@@ -537,6 +551,7 @@ angular.module('angularGanttDemoApp')
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
+                    filterName: rowModel.name,
                     content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
@@ -544,6 +559,7 @@ angular.module('angularGanttDemoApp')
                     },
                     tel: undefined,
                     email: undefined,
+                    team: rowModel.team,
                     parent: rowModel.id,
                     oldParent: rowModel.oldParent,
                     isNew: true,
@@ -554,12 +570,15 @@ angular.module('angularGanttDemoApp')
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
+                    filterName: rowModel.name,
                     content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
-                    },tel: undefined,
+                    },
+                    tel: undefined,
                     email: undefined,
+                    team: rowModel.team,
                     parent: rowModel.id,
                     isNew: true,
                     isSubRow: true
@@ -571,22 +590,27 @@ angular.module('angularGanttDemoApp')
         $scope.addResource = function() {
 
             //add a new resource to the view
-            if ($scope.options.resourceView)
+            if ($scope.options.resourceView) {
+                var name = 'New Resource ' + (getLastOrder('resource') + 1);
                 $scope.data.push({
                     id: utils.randomUuid(),
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
-                    name: 'New Resource '+(getLastOrder('resource')+1),
+                    name: name,
+                    filterName: name,
                     content: '<i class=\"{{(row.model.parent===\'\')?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
-                        'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
+                        'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row);\"></div>'
                     },
                     tel: '',
                     email: '',
                     parent: '',
+                    team: '',
                     isNew: true,
                     isSubRow: false
                 });
+            }
+
 
         };
 
@@ -598,7 +622,7 @@ angular.module('angularGanttDemoApp')
                     name: 'New Project',
                     order: getLastOrder('project') + 1,
                     height: '3em',
-                    content:'<i class=\"fa fa-' + '{{row.model.priorityLevel===\'critical\'? \'exclamation-triangle\':row.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{row.model.name}}',
+                    content: '<i class=\"fa fa-' + '{{row.model.priorityLevel===\'critical\'? \'exclamation-triangle\':row.model.priorityLevel===\'high\'? \'exclamation\':\'\'}}' + '\"></i> {{row.model.name}}',
                     classes: 'gantt-row-milestone',
                     color: '#45607D',
                     budget: '',
@@ -606,7 +630,7 @@ angular.module('angularGanttDemoApp')
                     data: '',
                     isNew: true,
                     isSubRow: false,
-                    editable:true
+                    editable: true
                 });
         };
 
@@ -618,7 +642,7 @@ angular.module('angularGanttDemoApp')
             return str.replace("\\u002e", ".").replace("\\u0024", "\$").replace("\\\\", "\\")
         }
 
-        var renameKey =function (obj, oldName, newName) {
+        var renameKey = function(obj, oldName, newName) {
             if (!obj.hasOwnProperty(oldName)) {
                 return false;
             }
@@ -629,7 +653,24 @@ angular.module('angularGanttDemoApp')
         }
         $scope.resourceSave = function(row, type) {
             var rowModel = row.model;
-            //bug fix scope link in view
+
+            //bug fix parent who has children not show when filter
+            //NOTE: use filtername to filter resource
+            if (!rowModel.isSubRow) {
+                rowModel.filterName = rowModel.name;
+            }
+
+            //bug fix update filterName and team
+            if ($scope.options.resourceView) {
+                for (var i = 0; i < $scope.data.length; i++) {
+                    if ($scope.data[i].parent === rowModel.id) {
+                        $scope.data[i].team = rowModel.team;
+                        $scope.data[i].filterName = rowModel.filterName;
+                    }
+                }
+            }
+
+            //bug fix make temp data to prevent scope data link in view
             var tempRowModel = angular.copy(rowModel);
 
             if (!$scope.options.resourceView) {
@@ -637,12 +678,14 @@ angular.module('angularGanttDemoApp')
                     tempRowModel.id = rowModel.oldId;
                 if (rowModel.oldParent !== undefined)
                     tempRowModel.parent = rowModel.oldParent;
-            } else
+            } else {
                 tempRowModel.id = rowModel.id;
+            }
+
 
             //bug fix mongoDB not support dot(.) or ($) in map key
             for (var i = 0; i < tempRowModel.columnKeys.length; i++) {
-                renameKey(tempRowModel.columnContents,tempRowModel.columnKeys[i],encodeKey(tempRowModel.columnKeys[i]));
+                renameKey(tempRowModel.columnContents, tempRowModel.columnKeys[i], encodeKey(tempRowModel.columnKeys[i]));
                 tempRowModel.columnKeys[i] = encodeKey(tempRowModel.columnKeys[i]);
             }
 
@@ -695,6 +738,8 @@ angular.module('angularGanttDemoApp')
 
             var rowModel = row.model;
             var rowModelId;
+
+            rowModel.filterName = rowModel.name;
             var tempRowModel = angular.copy(rowModel);
             if (!$scope.options.resourceView && rowModel.oldId !== undefined)
                 tempRowModel.id = rowModel.oldId;
@@ -717,16 +762,16 @@ angular.module('angularGanttDemoApp')
 
             }).then(function mySuccess(response) {
                 console.log('[LOG] project successfully saved');
-                if(response.data.trim() === 'DUPLICATED'){
-                  saveAlert = $alert({
-                      title: tempRowModel.name,
-                      content: 'Project name already exists!',
-                      type: 'danger',
+                if (response.data.trim() === 'DUPLICATED') {
+                    saveAlert = $alert({
+                        title: tempRowModel.name,
+                        content: 'Project name already exists!',
+                        type: 'danger',
 
-                  });
-                  saveAlert.$promise.then(function() {
-                      saveAlert.show();
-                  });
+                    });
+                    saveAlert.$promise.then(function() {
+                        saveAlert.show();
+                    });
                     return;
                 }
 
@@ -847,6 +892,7 @@ angular.module('angularGanttDemoApp')
 
         $scope.resourceDelete = function(row) {
             event.stopPropagation();
+
             var rowModel = row.model;
             //delete row offline
 
@@ -893,6 +939,7 @@ angular.module('angularGanttDemoApp')
                 saveAlert.$promise.then(function() {
                     saveAlert.show();
                 });
+                clearAllAside();
             }, function myError(response) {
                 console.log('[LOG] Fail to delete the rowModel');
                 $scope.cancel('row');
@@ -905,7 +952,8 @@ angular.module('angularGanttDemoApp')
         $scope.projectDelete = function(row) {
             var rowModel = row.model;
 
-            //delete children
+
+            //IMPORTANT: DO NOT DELETE CHILDREN IN DATABASE JUST DELETE IN VIEW
             if (!rowModel.isSubRow) {
                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                     if ($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id) {
@@ -982,12 +1030,37 @@ angular.module('angularGanttDemoApp')
         $scope.cancel = function(type) {
 
             if (type === 'task') {
-                angular.copy($scope.taskTempModel, $scope.asideTask.model);
+
+                //bug fix when click cancel after drawing new task
+                if ($scope.taskTempModel.isDrawing) {
+                    dataToRemove = [{
+                        'id': $scope.rowTempModel.id,
+                        'tasks': [{
+                            'id': $scope.taskTempModel.id
+                        }]
+                    }];
+                    $scope.remove();
+
+                } else
+                    angular.copy($scope.taskTempModel, $scope.asideTask.model);
             } else if (type === 'row') {
-                angular.copy($scope.rowTempModel, $scope.asideRow.model);
-            } else if (type === 'project') {
-                angular.copy($scope.projectTempModel, $scope.asideProject.model);
+                if ($scope.rowTempModel.isNew) {
+                    dataToRemove = [{
+                        'id': $scope.rowTempModel.id
+                    }];
+                    $scope.remove();
+                } else
+                    angular.copy($scope.rowTempModel, $scope.asideRow.model);
+            } else if (type === 'project' && $scope.projectTempModel.editable) {
+                if ($scope.projectTempModel.isNew) {
+                    dataToRemove = [{
+                        'id': $scope.projectTempModel.id
+                    }];
+                    $scope.remove();
+                } else
+                    angular.copy($scope.projectTempModel, $scope.asideProject.model);
             }
+            clearAllAside();
             isAsideOpened = false;
 
         };
@@ -996,7 +1069,7 @@ angular.module('angularGanttDemoApp')
 
             //reset temp data when change view
             if (isAsideOpened) {
-                hideAllAside();
+                clearAllAside();
                 isAsideOpened = false;
             }
             $scope.data = [];
@@ -1020,8 +1093,8 @@ angular.module('angularGanttDemoApp')
 
                     for (var i = 0; i < response.data.length; i++) {
                         for (var j = 0; j < response.data[i].columnKeys.length; j++) {
-                          renameKey(response.data[i].columnContents,response.data[i].columnKeys[j],decodeKey(response.data[i].columnKeys[j]));
-                          response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
+                            renameKey(response.data[i].columnContents, response.data[i].columnKeys[j], decodeKey(response.data[i].columnKeys[j]));
+                            response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
                         }
 
                     }
@@ -1044,18 +1117,16 @@ angular.module('angularGanttDemoApp')
                     }
                 }).then(function mySuccess(response) {
 
-                  for (var i = 0; i < response.data.length; i++) {
-                    if(response.data[i].height===undefined && !response.data[i].end){
-                      console.log(response.data[i].name);
-                      for (var j = 0; j < response.data[i].columnKeys.length; j++) {
-                        renameKey(response.data[i].columnContents,response.data[i].columnKeys[j],decodeKey(response.data[i].columnKeys[j]));
-                        response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
-                      }
+                    for (var i = 0; i < response.data.length; i++) {
+                        if (response.data[i].height === undefined && !response.data[i].end) {
+                            console.log(response.data[i].name);
+                            for (var j = 0; j < response.data[i].columnKeys.length; j++) {
+                                renameKey(response.data[i].columnContents, response.data[i].columnKeys[j], decodeKey(response.data[i].columnKeys[j]));
+                                response.data[i].columnKeys[j] = decodeKey(response.data[i].columnKeys[j]);
+                            }
+                        } else continue;
+
                     }
-
-                    else continue;
-
-                  }
 
                     var splitedProjectArr = [];
                     var tempData = [];
@@ -1232,7 +1303,7 @@ angular.module('angularGanttDemoApp')
         $scope.$watch('options.resourceView', function(resourceView) {
             console.log(resourceView);
             if (!resourceView) {
-                $scope.options.treeTableColumns = ['model.shortcut','model.priorityLevel', 'from', 'to'];
+                $scope.options.treeTableColumns = ['model.shortcut', 'model.priorityLevel', 'from', 'to'];
                 $scope.selected = 'projectView';
             } else {
                 $scope.options.treeTableColumns = ['model.shortcut'];
@@ -1282,16 +1353,29 @@ angular.module('angularGanttDemoApp')
                 'label': 'SR',
                 'value': 'SR'
             }]
+
         };
+        $scope.teams = ['Front', 'Back', 'Android', 'iPhone', 'iPad', 'Orderstat', 'UM', 'Technical Chart', 'MI6', 'Gen5', 'Ereport', 'JSP', 'Piwik', 'Sense', 'Noti', 'Seos', ' Seosd', 'DataClient', 'SetSmart', 'Click2win']
+
         $scope.sampleColorsPicker = {
             sampleColors: ['#1abc9c', '#49d049', '#3498db', '#9b59b6', '#3d566e',
                 '#f1c40f', '#e67e22', '#e74c3c', '#e678b6', '#95a5a6'
             ],
             setTaskColor: function(color) {
                 $scope.asideTask.model.color = color;
+
+                if (getContrastYIQ(color) === 'white')
+                    $scope.asideTask.model.classes = 'white';
+                else
+                    $scope.asideTask.model.classes = 'black';
+
             },
             setProjectColor: function(color) {
                 $scope.asideProject.model.color = color;
+                if (getContrastYIQ(color) === 'white')
+                    $scope.asideProject.model.classes = 'gantt-row-milestone white';
+                else
+                    $scope.asideProject.model.classes = 'gantt-row-milestone black';
             }
         };
         $scope.colorpicker = {
@@ -1309,12 +1393,30 @@ angular.module('angularGanttDemoApp')
                 console.log($event, $scope.asideTask.model.color, color);
                 if ($scope.asideTask.model.color !== undefined) {
                     $scope.asideTask.model.color = color;
+                    if (getContrastYIQ(color) === 'white')
+                        $scope.asideTask.model.classes = 'white';
+                    else
+                        $scope.asideTask.model.classes = 'black';
                 } else if ($scope.asideProject.model.color !== undefined) {
                     $scope.asideProject.model.color = color;
+                    if (getContrastYIQ(color) === 'white')
+                        $scope.asideProject.model.classes = 'white';
+                    else
+                        $scope.asideProject.model.classes = 'black';
                 }
 
 
             }
+        };
+
+        // Algorithm to Calculating Color Contrast
+        var getContrastYIQ = function(hexcolor) {
+            var r = parseInt(hexcolor.substr(1, 2), 16);
+            var g = parseInt(hexcolor.substr(3, 2), 16);
+            var b = parseInt(hexcolor.substr(5, 2), 16);
+            var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            //console.log('yiq: '+yiq);
+            return (yiq >= 128) ? 'black' : 'white';
         };
 
 

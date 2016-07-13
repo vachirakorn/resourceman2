@@ -22,9 +22,10 @@ angular.module('angularGanttDemoApp').directive('rowShortcut', function() {
               event.stopPropagation();
                 $scope.isDeleting = true;
             };
-        
+
             $scope.confirm = function() {
                 $scope.onDelete();
+                
             };
         }]
 

@@ -122,7 +122,7 @@
 		String row = request.getParameter("row");
 		DBObject rowObj = (DBObject) JSON.parse(row);
 
-		String name = rowObj.get("name").toString();
+
 		String resourceRowId = rowObj.get("id").toString();
 
 		rowObj.removeField("oldParent");
@@ -138,7 +138,13 @@
 		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
 		resource.update(query, update, true, false); //upsert
+		DBCursor cursor = resource.find(new BasicDBObject().append("parent",resourceRowId));
+		while(cursor.hasNext()){
+			DBObject resourceObj = cursor.next();
+			resourceObj.put("team",rowObj.get("team").toString());
+			resourceObj.put("filterName",rowObj.get("name").toString());
 
+		}
 
 	} else if (mode.equals("projectSave")) {
 
@@ -196,7 +202,7 @@
 			out.print(projectObj);
 
 			//find resource row who have tasks related to the project
-			Iterable<DBObject> resourceObjs = resource
+			Iterable resourceObjs = resource
 					.aggregate(Arrays.asList((DBObject) new BasicDBObject("$unwind", "$tasks"),
 							(DBObject) new BasicDBObject("$match",
 									new BasicDBObject("tasks.project", projectObj.get("name"))),
@@ -209,17 +215,22 @@
 													.append("parent", new BasicDBObject("$first", "$parent"))
 													.append("order", new BasicDBObject("$first", "$order"))
 													.append("name", new BasicDBObject("$first", "$name"))
+													.append("filterName", new BasicDBObject("$first", "$filterName"))
 													.append("tel", new BasicDBObject("$first", "$tel"))
 													.append("email", new BasicDBObject("$first", "$email"))
 													.append("utilization",new BasicDBObject("$first", "$utilization"))
+													.append("isSubRow",new BasicDBObject("$first", "$isSubRow"))
+													.append("isNew",new BasicDBObject("$first", "$isNew"))
 													.append("content",new BasicDBObject("$first", "$content"))
+													.append("team",new BasicDBObject("$first", "$team"))
 													.append("columnKeys",new BasicDBObject("$first", "$columnKeys"))
 													.append("columnContents",new BasicDBObject("$first", "$columnContents"))
 													.append("tasks", new BasicDBObject("$push", "$tasks"))),
 							(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", 1))))
 					.results();
-
-			for (DBObject resourceObj : resourceObjs) {
+		Iterator itr = resourceObjs.iterator();
+		while(itr.hasNext()){
+			DBObject resourceObj = (DBObject)itr.next();
 
 				String resourceRowId = resourceObj.get("id").toString();
 				String resourceRowRid = resourceObj.get("rid").toString();
@@ -228,10 +239,10 @@
 				resourceObj.removeField("_id");
 
 				String parentRowId = resourceObj.get("parent").toString();
-
+						//System.out.println("Check parent: "+ parentRowID);
 				if (parentRowId.equalsIgnoreCase("")) {
 					//main resource row has no parent row
-					//note : we have always found main resource row before sub resource row
+					//NOTE : we have always found parent resource row before child resource row
 
 					resourceObj.put("parent", projectRowId);
 					resourceObj.put("oldParent", "");

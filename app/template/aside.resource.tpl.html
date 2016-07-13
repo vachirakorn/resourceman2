@@ -11,18 +11,18 @@
                 </div>
 
             </div>
-            <div class="col-field-wrapper">
+            <!-- <div class="col-field-wrapper">
               <div class="form-group">
                   <label>PARENT</label>
                   <input type="text" class="form-control"  ng-model="asideRow.model.parent" style="width:300px;" >
               </div>
-            </div>
-            <div class="col-field-wrapper">
+            </div> -->
+            <!-- <div class="col-field-wrapper">
               <div class="form-group">
                   <label>ID</label>
                   <input type="text" class="form-control"  ng-model="asideRow.model.id" style="width:300px;" >
               </div>
-            </div>
+            </div> -->
         </div>
         <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width: 25%;">
             <div class="col-header" style="background-color: {{headerColor}};">
@@ -38,6 +38,12 @@
                 <div class="form-group" ng-if="asideRow.model.email!==undefined">
                     <label>EMAIL</label>
                     <input type="text" class="form-control"  ng-model="asideRow.model.email">
+                </div>
+            </div>
+            <div class="col-field-wrapper" id="team">
+                <div class="form-group" ng-if="asideRow.model.team!==undefined">
+                    <label>TEAM</label>
+                    <input type="text" class="form-control" ng-model="asideRow.model.team" bs-options="team for team in teams" placeholder="Enter team" data-placement="top-right" data-auto-select="true" bs-typeahead>
                 </div>
             </div>
             <!-- <div class="col-field-wrapper">
