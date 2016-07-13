@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Angular Gantt - Resources Management application by Vachirakorn V.0.1</title>
+    <title>ResourceMan 2.0</title>
+    <!-- developer : vachirakorn rungsikawanich vachirakorn@hotmail.com -->
     <meta name="description" content="Gantt chart component for AngularJS">
     <meta name="viewport" content="width=device-width">
 
@@ -48,12 +49,12 @@
     <div ng-controller="MainCtrl">
         <div class="navbar navbar-default" role="navigation" bs-navbar>
             <div class="navbar-header">
-                <a class="navbar-brand" href="http://www.angular-gantt.com">Chi-gantt - Gantt for Resources Management</a>
+                <a class="navbar-brand" href="http://www.angular-gantt.com">ResourceMan 2.0 - Gantt for Resources Management</a>
             </div>
             <div class="navbar-right navbar-right-spacing">
-                <a class="navbar-text navbar-link" href="http://www.angular-gantt.com"><i class="fa fa-book"></i> Implemented Documentation</a>
-                <a class="navbar-text navbar-link" href="http://www.angular-gantt.com"><i class="fa fa-book"></i> Original Documentation</a>
-                <a class="navbar-text navbar-link" href="https://github.com/angular-gantt/angular-gantt"><i class="fa fa-github"></i> Chi-Gantt GitHub</a>
+                <!-- <a class="navbar-text navbar-link" href="http://www.angular-gantt.com"><i class="fa fa-book"></i> Implemented Documentation</a> -->
+                <!-- <a class="navbar-text navbar-link" href="http://www.angular-gantt.com"><i class="fa fa-book"></i> Original Documentation</a> -->
+                <!-- <a class="navbar-text navbar-link" href="https://github.com/angular-gantt/angular-gantt"><i class="fa fa-github"></i> Chi-Gantt GitHub</a> -->
             </div>
         </div>
 
@@ -71,7 +72,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel-group" bs-collapse>
+                       <div ng-hide="true" class="panel-group" bs-collapse>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
@@ -141,14 +142,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-crop"></i> Layout</label>
-                                                        <br>
-                                                        <div class="btn-group" bs-checkbox-group>
-                                                            <button type="button" class="btn btn-default" ng-model="options.maxHeight" bs-checkbox>Height</button>
-                                                            <button ng-disabled="!canAutoWidth(options.scale)" type="button" class="btn btn-default" ng-model="options.width" bs-checkbox>Width</button>
-                                                        </div>
-                                                    </div>
+
 
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-search"></i> Zoom</label>
@@ -193,14 +187,14 @@
 
 
 
-                                                    <!-- <div class="form-group text-center">
+                                                   <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-database"></i>Add Overlapping Task</label>
                                                         <br>
                                                         <div class="form-group">
                                                             <input type="number" ng-model="options.targetDataAddRowIndex" step="1" min="0" class="form-control" placeholder="Row Index" />
                                                             <button class="btn btn-default" ng-click="addOverlapTaskToTargetRowIndex()">Add</button>
                                                         </div>
-                                                    </div> -->
+                                                    </div>
 
                                                 </div>
                                             </div>
@@ -275,6 +269,14 @@
                                                         <div class="btn-group">
                                                             <button class="btn btn-default" ng-click="expandAll()">Expand all</button>
                                                             <button class="btn btn-default" ng-click="collapseAll()">Collapse all</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group text-center">
+                                                        <label class="control-label"><i class="fa fa-crop"></i> Zoom</label>
+                                                        <br>
+                                                        <div class="btn-group" bs-checkbox-group>
+                                                            <!-- <button type="button" class="btn btn-default" ng-model="options.maxHeight" bs-checkbox>Height</button> -->
+                                                            <button ng-disabled="!canAutoWidth(options.scale)" type="button" class="btn btn-default" ng-model="options.width" bs-checkbox>Moveable</button>
                                                         </div>
                                                     </div>
 
@@ -364,11 +366,14 @@
                                                 </gantt-dependencies>
                                             </div>
                                         </div>
-
-                                        <div class="panel-body" style="height:auto;" ng-style="(eachdata.height==='3em' || eachdata.parent==='') && {'background-color':'#f2f2f2'}" ng-repeat="eachdata in data track by $index">
-                                            {{eachdata}}
+                                        <div class="panel-body" style="height:500px;">
+                                            <!-- {{eachdata}} -->
 
                                         </div>
+                                        <!-- <div class="panel-body" style="height:500px;" ng-style="(eachdata.height==='3em' || eachdata.parent==='') && {'background-color':'#f2f2f2'}" ng-repeat="eachdata in data track by $index">
+                                            {{eachdata}}
+
+                                        </div> -->
 
                                     </div>
                                 </div>

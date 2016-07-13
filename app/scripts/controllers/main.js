@@ -158,8 +158,8 @@ angular.module('angularGanttDemoApp')
             },
             autoExpand: 'both',
             taskOutOfRange: 'truncate',
-            fromDate: moment().add(-3, 'week'),
-            toDate: moment().add(3, 'week'),
+            fromDate: moment().add(-1, 'week'),
+            toDate: moment().add(5, 'week'),
             rowContentEnabled: true,
             taskContentEnabled: true,
             rowContent: '', //custom
@@ -178,7 +178,7 @@ angular.module('angularGanttDemoApp')
                 'day': {
                     start: moment('0:00', 'HH:mm'),
                     end: moment('23:59', 'HH:mm'),
-                    color: '#ACFFA3',
+                    color: '#999999',
                     working: true,
                     default: true
                 },
@@ -234,7 +234,7 @@ angular.module('angularGanttDemoApp')
                     id: utils.randomUuid(), // Unique id of the task.
                     name: 'New task', // Name shown on top of each task.
                     project: 'Unassigned project', //default project name of the task
-                    color: '#AA8833', // Color of the task in HEX format (Optional).
+                    color: '#49d049', // Color of the task in HEX format (Optional).
                     isDrawing: true
                 };
 
@@ -282,14 +282,6 @@ angular.module('angularGanttDemoApp')
                     api.columns.on.generate($scope, logColumnsGenerateEvent);
 
                     api.rows.on.filter($scope, logRowsFilterEvent);
-                    api.rows.on.filter($scope, function(rows, filteredRows) {
-
-                        console.log('rows' + rows);
-                        console.log('filteredRows' + filteredRows);
-
-
-
-                    });
                     api.tasks.on.filter($scope, logTasksFilterEvent);
 
                     api.data.on.change($scope, function(newData) {
@@ -801,7 +793,7 @@ angular.module('angularGanttDemoApp')
                     content: 'Click reload button to update view ',
                     type: 'danger',
                     duration: '5',
-                    placement: 'center',
+                    placement: 'top-left',
                     templateUrl: 'template/reload.alert.tpl.html'
                 });
                 reloadAlert.$promise.then(function() {
@@ -1287,7 +1279,7 @@ angular.module('angularGanttDemoApp')
         };
         $scope.isValidData = function(from, to) {
             //  console.log(moment(from) < moment(to));
-            return moment(from) < moment(to);
+            return moment(from) <= moment(to);
         };
 
 

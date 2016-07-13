@@ -14,23 +14,28 @@
 
 <%!//connecting db method (prevent crash from multiple mongoDB connections to Mongo)
 	private static DB db = null;
-	private static String dbname = "resourceman";
-	private static String host = "localhost";
-	private static int port = 27017;
+	private static final String userDB = "sttdbusr";
+	private static final String passwordDB = "C0urtr00m$";
+	private static final String dbname = "sttresourceman";
+	private static final String host = "10.23.63.25";
+	private static final int port = 27017;
 	private static final Integer ASCENDING = new Integer(1);
 	private static final Integer DESCENDING = new Integer(-1);
 	private static final Integer SHOW = new Integer(1);
 	private static final Integer HIDE = new Integer(1);
 
+	private static final boolean debug = true;
+
 	private static DBCollection checkConnection(String collection) throws UnknownHostException {
 		if (db == null) {
 			db = (new Mongo(host, port)).getDB(dbname);
 		}
-		//	boolean auth = db.authenticate("testdb", "password".toCharArray());
-		//	if(auth)
-		return db.getCollection(collection);
-		//	else
-		//		return null;
+		boolean auth = db.authenticate(userDB, passwordDB.toCharArray());
+		if(auth) {
+			return db.getCollection(collection);
+		} else {
+			return null;
+		}
 	}
 
 	public static boolean useArraysBinarySearch(String[] arr, String targetValue) {
@@ -75,9 +80,12 @@
 	DBCollection project = checkConnection("project");
 	String mode = request.getParameter("mode");
 
-	System.out.println("\n\n\n\nREQUEST START");
-	System.out.println("\n\n\n\nRANDOM :" + randomUuid());
-	System.out.println("MODE : " + mode);
+	if(debug){
+		System.out.println("\n\n\n\nREQUEST START");
+		System.out.println("\n\n\n\nRANDOM :" + randomUuid());
+		System.out.println("MODE : " + mode);
+	}
+
 	if (mode.equals("load")) {
 		BasicDBObject data = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
@@ -95,8 +103,11 @@
 			String resourceRowId = buffer.get("_id").toString();
 			buffer.put("rid", resourceRowId); //create rid attr for using in the view
 			buffer.removeField("_id");
+
+			if(debug){
 			System.out.println("\nLOADING RESOURCE");
 			System.out.println(buffer);
+		}
 			out.print(buffer);
 			if (cursor.hasNext()) {
 				out.print(",");
@@ -109,9 +120,11 @@
 		String resourceRowId = request.getParameter("id");
 		String tasks = request.getParameter("tasks");
 
+		if(debug){
 		System.out.println("\nTASK SAVE");
 		System.out.println("tasks: " + JSON.parse(tasks));
 		System.out.println("SAVE TO ROW ID: " + resourceRowId);
+		}
 
 		BasicDBObject update = new BasicDBObject();
 		update.append("$set", new BasicDBObject().append("tasks", JSON.parse(tasks)));
@@ -119,10 +132,10 @@
 		DBObject findRowID = project.findOne(query);
 
 		if (findRowID == null) {
-			System.out.println("SAVE IN RESOURCE");
+			if(debug)System.out.println("SAVE IN RESOURCE");
 			resource.update(query, update);
 		} else {
-			System.out.println("SAVE IN PROJECT");
+			if(debug)System.out.println("SAVE IN PROJECT");
 			project.update(query, update);
 		}
 
@@ -138,9 +151,11 @@
 		rowObj.removeField("currentProject");
 		rowObj.put("isNew", Boolean.FALSE);
 
+		if(debug){
 		System.out.println("\nRESOURCE SAVE");
 		System.out.println("rowObj: " + rowObj.toString());
 		System.out.println("RESOURCE ID: " + resourceRowId);
+		}
 
 		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
@@ -162,14 +177,16 @@
 
 		if (Boolean.parseBoolean(rowObj.get("isNew").toString())
 				&& project.find(new BasicDBObject().append("name", projectName)).hasNext()) {
-			System.out.println("\nDUPLICATED");
+			if(debug)System.out.println("\nDUPLICATED");
 			out.print("DUPLICATED");
 			return;
 		}
 
+		if(debug){
 		System.out.println("\nPROJECT SAVE");
 		System.out.println("projectRowObj: " + rowObj.toString());
 		System.out.println("PROJECT ID: " + projectRowId);
+	}
 
 		rowObj.put("isNew", Boolean.FALSE);
 		BasicDBObject update = new BasicDBObject().append("$set", rowObj);
@@ -178,7 +195,7 @@
 
 	} else if (mode.equals("projectLoad")) {
 
-		System.out.println("\nPROJECT LOAD");
+		if(debug)System.out.println("\nPROJECT LOAD");
 		BasicDBObject data = new BasicDBObject();
 		BasicDBObject fields = new BasicDBObject();
 		ArrayList addedRow = new ArrayList();
@@ -201,46 +218,51 @@
 			projectObj.removeField("_id");
 
 			//print out project
+			if(debug){
 			System.out.println("\nPROJECT LOADING");
 			System.out.println("name : " + projectObj.get("name"));
 			System.out.println("id : " + projectObj.get("id"));
 			System.out.println("parent : " + projectObj.get("parent"));
+		}
 
 			out.print(projectObj);
 
 			//find resource row who have tasks related to the project
-			DBObject[] aggregateCommand = { (DBObject) new BasicDBObject("$unwind", "$tasks"),
-					(DBObject) new BasicDBObject("$match",
-							new BasicDBObject("tasks.project", projectObj.get("name"))),
+			DBObject unwindCmd = (DBObject) new BasicDBObject("$unwind", "$tasks");
+			DBObject matchCmd = (DBObject) new BasicDBObject("$match",new BasicDBObject("tasks.project", projectObj.get("name")));
+			DBObject groupCmd = (DBObject) new BasicDBObject("$group",new BasicDBObject("_id", new BasicDBObject("parent", "$parent").append("id", "$id"))
+							.append("id", new BasicDBObject("$first", "$id"))
+							.append("parent", new BasicDBObject("$first", "$parent"))
+							.append("order", new BasicDBObject("$first", "$order"))
+							.append("name", new BasicDBObject("$first", "$name"))
+							.append("filterName", new BasicDBObject("$first", "$filterName"))
+							.append("tel", new BasicDBObject("$first", "$tel"))
+							.append("email", new BasicDBObject("$first", "$email"))
+							.append("utilization", new BasicDBObject("$first", "$utilization"))
+							.append("isSubRow", new BasicDBObject("$first", "$isSubRow"))
+							.append("isNew", new BasicDBObject("$first", "$isNew"))
+							.append("content", new BasicDBObject("$first", "$content"))
+							.append("team", new BasicDBObject("$first", "$team"))
+							.append("columnKeys", new BasicDBObject("$first", "$columnKeys"))
+							.append("columnContents", new BasicDBObject("$first", "$columnContents"))
+							.append("tasks", new BasicDBObject("$push", "$tasks")));
 
-					(DBObject) new BasicDBObject("$group",
-							new BasicDBObject("_id", new BasicDBObject("parent", "$parent").append("id", "$id"))
-									.append("id", new BasicDBObject("$first", "$id"))
-									.append("rid", new BasicDBObject("$first", "$_id"))
-									.append("parent", new BasicDBObject("$first", "$parent"))
-									.append("order", new BasicDBObject("$first", "$order"))
-									.append("name", new BasicDBObject("$first", "$name"))
-									.append("filterName", new BasicDBObject("$first", "$filterName"))
-									.append("tel", new BasicDBObject("$first", "$tel"))
-									.append("email", new BasicDBObject("$first", "$email"))
-									.append("utilization", new BasicDBObject("$first", "$utilization"))
-									.append("isSubRow", new BasicDBObject("$first", "$isSubRow"))
-									.append("isNew", new BasicDBObject("$first", "$isNew"))
-									.append("content", new BasicDBObject("$first", "$content"))
-									.append("team", new BasicDBObject("$first", "$team"))
-									.append("columnKeys", new BasicDBObject("$first", "$columnKeys"))
-									.append("columnContents", new BasicDBObject("$first", "$columnContents"))
-									.append("tasks", new BasicDBObject("$push", "$tasks"))),
-					(DBObject) new BasicDBObject("$sort", new BasicDBObject("order", ASCENDING)) };
+			DBObject sortCmd = (DBObject) new BasicDBObject("$sort", new BasicDBObject("order", ASCENDING));
+			List aggregateCommandList = new ArrayList();
 
-			Iterable resourceObjs = resource.aggregate(Arrays.asList(aggregateCommand)).results();
+			aggregateCommandList.add(unwindCmd);
+			aggregateCommandList.add(matchCmd);
+			aggregateCommandList.add(groupCmd);
+			aggregateCommandList.add(sortCmd);
+
+
+
+			Iterable resourceObjs = resource.aggregate(aggregateCommandList).results();
 			Iterator itr = resourceObjs.iterator();
 			while (itr.hasNext()) {
 				DBObject resourceObj = (DBObject) itr.next();
 
 				String resourceRowId = resourceObj.get("id").toString();
-				String resourceRowRid = resourceObj.get("rid").toString();
-				resourceObj.put("rid", resourceRowRid);
 				resourceObj.put("currentProject", projectName);
 				resourceObj.removeField("_id");
 
@@ -274,10 +296,11 @@
 						parentRowObj.removeField("_id");
 						//remove tasks !
 						parentRowObj.removeField("tasks");
-
+if(debug){
 						System.out.println("\n\nADDED PARENT ROW NO TASK ");
 						System.out.println("name : " + parentRowObj.get("name"));
 						System.out.println("id : " + parentRowObj.get("id"));
+					}
 
 						out.print(",");
 						out.print(parentRowObj.toString());
@@ -286,11 +309,12 @@
 					//print sub resource row
 					if (!isAdded(addedRow, resourceRowId)) {
 						addedRow.add(resourceRowId);
-
+if(debug){
 						System.out.println("\nLOADING RESOURCE");
 						System.out.println("name : " + resourceObj.get("name"));
 						System.out.println("id : " + resourceObj.get("id"));
 						System.out.println("parent : " + resourceObj.get("parent"));
+					}
 
 						out.print(",");
 						out.print(resourceObj);
@@ -313,13 +337,13 @@
 	} else if (mode.equals("resourceDelete")) {
 
 		String resourceRowId = request.getParameter("id");
-		System.out.println("remove ID: " + resourceRowId);
+	if(debug)	System.out.println("remove ID: " + resourceRowId);
 
 		DBCursor cursor = resource.find(new BasicDBObject("parent", resourceRowId));
 
 		while (cursor.hasNext()) {
 			DBObject buffer = cursor.next();
-			System.out.println("remove child: " + buffer.get("name").toString());
+		if(debug)	System.out.println("remove child: " + buffer.get("name").toString());
 			resource.remove(new BasicDBObject().append("id", buffer.get("id").toString()));
 		}
 		resource.remove(new BasicDBObject().append("id", resourceRowId));
@@ -331,12 +355,12 @@
 
 	} else if (mode.equals("getProjectsName")) {
 
-		System.out.println("\nGET PROJECT NAME");
+	if(debug)	System.out.println("\nGET PROJECT NAME");
 		DBCursor cursor = project.find(new BasicDBObject(), new BasicDBObject("name", SHOW));
 		out.print("[");
 		while (cursor.hasNext()) {
 			DBObject obj = cursor.next();
-			System.out.println(obj);
+		if(debug)	System.out.println(obj);
 			out.print(obj);
 			if (cursor.hasNext())
 				out.print(",");
@@ -345,7 +369,7 @@
 
 	} else if (mode.equals("changeOrder")) {
 
-		System.out.println("\nCHANGE ROW ORDER");
+		if(debug)System.out.println("\nCHANGE ROW ORDER");
 		//String row = request.getParameter("row");
 		//DBObject rowObj = (DBObject) JSON.parse(row);
 		Integer oldOrder = new Integer(request.getParameter("oldOrder"));
@@ -404,6 +428,6 @@
 		}
 
 	} else {
-		System.out.println("There are no request");
+		if(debug)System.out.println("There are no request");
 	}
 %>
