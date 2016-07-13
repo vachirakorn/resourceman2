@@ -313,7 +313,7 @@ angular.module('angularGanttDemoApp')
 
                         $http({
                             method: 'POST',
-                            url: 'scripts/controllers/dataLoader.jsp',
+                            url: 'scripts/jsp/dataLoader.jsp',
                             params: {
                                 mode: 'changeOrder',
                                 oldOrder: oldOrder,
@@ -693,7 +693,7 @@ angular.module('angularGanttDemoApp')
             console.log("SEND : " + JSON.stringify(tempRowModel));
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'resourceSave',
                     row: JSON.stringify(tempRowModel)
@@ -751,7 +751,7 @@ angular.module('angularGanttDemoApp')
 
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'projectSave',
                     row: JSON.stringify(tempRowModel)
@@ -843,7 +843,7 @@ angular.module('angularGanttDemoApp')
             console.log('SEND : ' + JSON.stringify(rowModel));
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'taskSave',
                     id: rowModelId,
@@ -919,7 +919,7 @@ angular.module('angularGanttDemoApp')
 
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'resourceDelete',
                     id: rowModel.id
@@ -973,7 +973,7 @@ angular.module('angularGanttDemoApp')
 
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'projectDelete',
                     id: rowModel.oldId
@@ -1081,7 +1081,7 @@ angular.module('angularGanttDemoApp')
             if ($scope.options.resourceView) {
                 $http({
                     method: 'POST',
-                    url: 'scripts/controllers/dataLoader.jsp',
+                    url: 'scripts/jsp/dataLoader.jsp',
                     params: {
                         mode: 'load'
                     },
@@ -1108,7 +1108,7 @@ angular.module('angularGanttDemoApp')
             } else {
                 $http({
                     method: 'POST',
-                    url: 'scripts/controllers/dataLoader.jsp',
+                    url: 'scripts/jsp/dataLoader.jsp',
                     params: {
                         mode: 'projectLoad'
                     },
@@ -1179,7 +1179,7 @@ angular.module('angularGanttDemoApp')
             $scope.projectsName = [];
             $http({
                 method: 'POST',
-                url: 'scripts/controllers/dataLoader.jsp',
+                url: 'scripts/jsp/dataLoader.jsp',
                 params: {
                     mode: 'getProjectsName'
                 },
@@ -1390,14 +1390,14 @@ angular.module('angularGanttDemoApp')
             swatchOnly: true,
             inline: false,
             onColorChange: function($event, color) {
-                console.log($event, $scope.asideTask.model.color, color);
-                if ($scope.asideTask.model.color !== undefined) {
+              //  console.log($event, $scope.asideTask.model.color, color);
+                if ($scope.asideTask !== undefined) {
                     $scope.asideTask.model.color = color;
                     if (getContrastYIQ(color) === 'white')
                         $scope.asideTask.model.classes = 'white';
                     else
                         $scope.asideTask.model.classes = 'black';
-                } else if ($scope.asideProject.model.color !== undefined) {
+                } else if ($scope.asideProject !== undefined) {
                     $scope.asideProject.model.color = color;
                     if (getContrastYIQ(color) === 'white')
                         $scope.asideProject.model.classes = 'white';
