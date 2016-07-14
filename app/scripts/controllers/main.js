@@ -338,10 +338,10 @@ angular.module('angularGanttDemoApp')
                     });
                     api.tasks.on.rowChange($scope, function(task, oldRow) {
                         checkAutoSave(task.model.id);
-                        // save old row
-                        $scope.resourceSave(oldRow, 'autosave');
-                        // task.model.id = utils.randomUuid();
-                        $scope.resourceSave(task.row, 'autosave');
+                        // delete this task in old row
+                        $scope.taskSave(task, 'deleteOriginal');
+                        // save task in new row
+                        $scope.taskSave(task, 'autosave');
                         // $scope.reload();
                     });
                     api.tasks.on.add($scope, function(task) {
@@ -369,7 +369,7 @@ angular.module('angularGanttDemoApp')
 
                     });
                     api.rows.on.add($scope, function(row) {
-                        if (row.model.isNew === undefined || !row.model.isNew) return;
+                        if (row.model.isNew === undefined || !row.model.isNew ) return;
                         console.log('autosave new added');
                         //row.model.isNew = undefined;
                         checkAutoSave();
@@ -379,14 +379,16 @@ angular.module('angularGanttDemoApp')
                             $scope.projectTempModel = angular.copy(row.model);
                         }
 
-                        if ($scope.options.resourceView) {
-                            $scope.asideRow = row; //TODO:CHANGE NAME TO asideResource
+                        if ($scope.options.resourceView  && !row.model.isChildRow) {
+                            $scope.asideResource = row; //TODO:CHANGE NAME TO asideResource
                             $scope.resourceSave(row, 'autosave');
                             resourceAside.$promise.then(function() {
                                 resourceAside.show();
                             });
                             isAsideOpened = true;
 
+                        }else if($scope.options.resourceView && row.model.isChildRow){
+                            $scope.resourceSave(row, 'autosave');
                         } else {
                             $scope.asideProject = row;
                             $scope.projectSave(row, 'autosave');
@@ -437,7 +439,7 @@ angular.module('angularGanttDemoApp')
 
 
                         } else if (directiveName === 'ganttRowLabel') {
-                          // Disallow user to click row-label
+                            // Disallow user to click row-label
 
                             element.unbind();
                             element.bind('click', function() {
@@ -448,13 +450,13 @@ angular.module('angularGanttDemoApp')
                                 checkAutoSave(directiveScope.row.model.id);
 
                                 if (directiveScope.row.model.height === undefined && $scope.options.resourceView) {
-                                    $scope.asideRow = directiveScope.row;
+                                    $scope.asideResource = directiveScope.row;
                                     resourceAside.$promise.then(function() {
                                         resourceAside.show();
                                     });
                                     isAsideOpened = true;
 
-                                } else if (directiveScope.row.model.height !== undefined ) {
+                                } else if (directiveScope.row.model.height !== undefined) {
                                     $scope.asideProject = directiveScope.row;
                                     projectAside.$promise.then(function() {
                                         projectAside.show();
@@ -492,13 +494,13 @@ angular.module('angularGanttDemoApp')
             else tmpFocusObjId = focusObjId;
 
             if (!isAsideOpened) return;
-            else if (isAsideOpened && $scope.asideRow !== undefined && $scope.asideRow.model.height === undefined) {
-                $scope.resourceSave($scope.asideRow, 'autosave');
+            else if (isAsideOpened && $scope.asideResource !== undefined && $scope.asideResource.model.height === undefined) {
+                $scope.resourceSave($scope.asideResource, 'autosave');
                 clearAllAside();
-                $scope.asideRow = undefined;
+                $scope.asideResource = undefined;
                 isAsideOpened = false;
 
-            } else if (isAsideOpened && $scope.asideRow !== undefined && $scope.asideRow.model.height !== undefined) {
+            } else if (isAsideOpened && $scope.asideResource !== undefined && $scope.asideResource.model.height !== undefined) {
                 $scope.projectSave($scope.asideProject, 'autosave');
                 clearAllAside();
                 $scope.asideProject = undefined;
@@ -544,7 +546,7 @@ angular.module('angularGanttDemoApp')
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
                     filterName: rowModel.name,
-                    content: ' <i class=\"{{row.model.isSubRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
+                    content: ' <i class=\"{{row.model.isChildRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
@@ -555,7 +557,7 @@ angular.module('angularGanttDemoApp')
                     parent: rowModel.id,
                     oldParent: rowModel.oldParent,
                     isNew: true,
-                    isSubRow: true
+                    isChildRow: true
                 });
             } else {
                 $scope.data.push({
@@ -563,7 +565,7 @@ angular.module('angularGanttDemoApp')
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
                     filterName: rowModel.name,
-                    content: ' <i class=\"{{row.model.isSubRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
+                    content: ' <i style="margin-left:10px;" class=\"{{row.model.isChildRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
@@ -573,7 +575,7 @@ angular.module('angularGanttDemoApp')
                     team: rowModel.team,
                     parent: rowModel.id,
                     isNew: true,
-                    isSubRow: true
+                    isChildRow: true
                 });
             }
 
@@ -589,7 +591,7 @@ angular.module('angularGanttDemoApp')
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: name,
                     filterName: name,
-                    content: '<i class=\"{{(row.model.parent===\'\')?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    content: '<i class=\"{{row.model.isChildRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row);\"></div>'
@@ -599,7 +601,7 @@ angular.module('angularGanttDemoApp')
                     parent: '',
                     team: '',
                     isNew: true,
-                    isSubRow: false
+                    isChildRow: false
                 });
             }
 
@@ -621,7 +623,7 @@ angular.module('angularGanttDemoApp')
                     manager: '',
                     data: '',
                     isNew: true,
-                    isSubRow: false,
+                    isChildRow: false,
                     editable: true
                 });
         };
@@ -648,7 +650,7 @@ angular.module('angularGanttDemoApp')
 
             //bug fix parent who has children not show when filter
             //NOTE: use filtername to filter resource
-            if (!rowModel.isSubRow) {
+            if (!rowModel.isChildRow) {
                 rowModel.filterName = rowModel.name;
             }
 
@@ -813,7 +815,11 @@ angular.module('angularGanttDemoApp')
 
         $scope.taskSave = function(task, type) {
             var taskModel = task.model;
-            var rowModel = task.row.model;
+            var rowModel;
+            if (type === 'deleteOriginal')
+                rowModel = task.originalRow.model;
+            else rowModel = task.row.model;
+
             var tasks = [];
             var rowModelId;
 
@@ -830,6 +836,7 @@ angular.module('angularGanttDemoApp')
             } else {
                 tasks = rowModel.tasks;
                 rowModelId = rowModel.id;
+
             }
 
             console.log('SEND : ' + JSON.stringify(rowModel));
@@ -889,7 +896,7 @@ angular.module('angularGanttDemoApp')
             //delete row offline
 
             //delete children
-            if (!rowModel.isSubRow) {
+            if (!rowModel.isChildRow) {
                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                     if ($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id) {
                         dataToRemove = [{
@@ -946,7 +953,7 @@ angular.module('angularGanttDemoApp')
 
 
             //IMPORTANT: DO NOT DELETE CHILDREN IN DATABASE JUST DELETE IN VIEW
-            if (!rowModel.isSubRow) {
+            if (!rowModel.isChildRow) {
                 for (var i = $scope.data.length - 1; i >= 0; i--) {
                     if ($scope.data[i].parent !== undefined && $scope.data[i].parent === rowModel.id) {
                         dataToRemove = [{
@@ -1012,6 +1019,8 @@ angular.module('angularGanttDemoApp')
             //note : reuse save function
             $scope.taskSave(task, 'delete');
         };
+        // override parameter
+
 
         // Remove data action
         $scope.remove = function() {
@@ -1042,7 +1051,7 @@ angular.module('angularGanttDemoApp')
                     }];
                     $scope.remove();
                 } else
-                    angular.copy($scope.rowTempModel, $scope.asideRow.model);
+                    angular.copy($scope.rowTempModel, $scope.asideResource.model);
             } else if (type === 'project' && $scope.projectTempModel.editable) {
                 if ($scope.projectTempModel.isNew) {
                     dataToRemove = [{
@@ -1279,7 +1288,7 @@ angular.module('angularGanttDemoApp')
         };
         $scope.isValidDate = function(from, to) {
             //  console.log(moment(from) < moment(to));
-            return moment(from) <= moment(to) && moment(to).diff(moment(from),'days');
+            return moment(from) <= moment(to);
         };
 
 
@@ -1353,14 +1362,15 @@ angular.module('angularGanttDemoApp')
             sampleColors1: ['#FF0000', '#FF4200', '#FF7E00', '#FFD100', '#FDFF00',
                 '#39C3F2', '#2BABDC', '#1E95B5', '#1D7AA5', '#035793',
                 '#24555b', '#3C9198', '#49AFA4', '#67C0A4', '#A5DDB0',
-                '#FAAEA1', '#F57A73', '#E26352',  '#D25052', '#6B3630',
+                '#FAAEA1', '#F57A73', '#E26352', '#D25052', '#6B3630',
                 '#9A2144', '#842344', '#741E3B', '#532F55', '#825393',
                 '#CBCBCB', '#B2B2B2', '#999999', '#808080', '#676767'
 
-            ],sampleColors2: ['#ffb5e8', '#ff9cee', '#ffccf9', '#fcc2ff', '#f6a6ff',
+            ],
+            sampleColors2: ['#ffb5e8', '#ff9cee', '#ffccf9', '#fcc2ff', '#f6a6ff',
                 '#b28dff', '#c5a3ff', '#d5aaff', '#ecd4ff', '#fbe4ff',
                 '#dcd3ff', '#a79aff', '#b5b9ff', '#97a2ff', '#afcbff',
-                '#aff8db', '#c4faf8', '#85e3ff',  '#ace7ff', '#6eb5ff',
+                '#aff8db', '#c4faf8', '#85e3ff', '#ace7ff', '#6eb5ff',
                 '#bffcc6', '#dbffd6', '#f3ffe3', '#e7ffac', '#ffffd1',
                 '#ffc9de', '#ffabab', '#ffbebc', '#ffcbc1', '#fff5ba'
 
@@ -1394,7 +1404,7 @@ angular.module('angularGanttDemoApp')
             swatchOnly: true,
             inline: false,
             onColorChange: function($event, color) {
-              //  console.log($event, $scope.asideTask.model.color, color);
+                //  console.log($event, $scope.asideTask.model.color, color);
                 if ($scope.asideTask !== undefined) {
                     $scope.asideTask.model.color = color;
                     if (getContrastYIQ(color) === 'white')

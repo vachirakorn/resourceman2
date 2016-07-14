@@ -18,6 +18,7 @@
 	// private static final String passwordDB = "C0urtr00m$";
 	private static final String dbname = "sttresourceman";
 	private static final String host = "localhost";
+	// private static final String host = "10.23.63.25";
 	private static final int port = 27017;
 	private static final Integer ASCENDING = new Integer(1);
 	private static final Integer DESCENDING = new Integer(-1);
@@ -246,7 +247,7 @@
 							.append("tel", new BasicDBObject("$first", "$tel"))
 							.append("email", new BasicDBObject("$first", "$email"))
 							.append("utilization", new BasicDBObject("$first", "$utilization"))
-							.append("isSubRow", new BasicDBObject("$first", "$isSubRow"))
+							.append("isChildRow", new BasicDBObject("$first", "$isChildRow"))
 							.append("isNew", new BasicDBObject("$first", "$isNew"))
 							.append("content", new BasicDBObject("$first", "$content"))
 							.append("team", new BasicDBObject("$first", "$team"))
@@ -294,6 +295,9 @@
 					//child row has parentRowId
 					DBObject parentRowObj = resource.findOne(new BasicDBObject("id", parentRowId));
 					String parentRowObjId = parentRowObj.get("id").toString();
+					String parentRowObjName = parentRowObj.get("name").toString();
+					String parentRowObjContent = parentRowObj.get("content").toString();
+
 					BasicDBList resourceTasks = (BasicDBList) resourceObj.get("tasks");
 
 					//Fixed bug wasted parent row
@@ -302,27 +306,28 @@
 
 						addedRow.add(parentRowObjId);
 						addedRow.add(resourceRowId);
-						parentRowObj.put("parent", projectRowId);
-						parentRowObj.put("oldParent", "");
-						parentRowObj.put("currentProject", projectName);
+						//disguise to parent row
+						resourceObj.put("parent", projectRowId);
+						resourceObj.put("oldParent", parentRowObjId);
+						resourceObj.put("currentProject", projectName);
+						resourceObj.put("content", parentRowObjContent);
+						resourceObj.put("name",parentRowObjName);
+						resourceObj.put("isChildRow",Boolean.FALSE);
 
-						//replace parent's tasks with child's tasks
-						parentRowObj.put("tasks", resourceTasks);
-
-						//change parent's id to child's id
-						parentRowObj.put("id", resourceRowId);
 						disguiseChildId = resourceRowId;
 						hasChildDisguise = true;
 
-						parentRowObj.removeField("_id");
+						resourceObj.removeField("_id");
+
 						if (debug) {
 							System.out.println("\n\nADDED PARENT ROW NO TASK ");
-							System.out.println("name : " + parentRowObj.get("name"));
-							System.out.println("id : " + parentRowObj.get("id"));
+							System.out.println("name : " + resourceObj.get("name"));
+							System.out.println("id : " + resourceObj.get("id"));
+							System.out.println("oldParent : " + resourceObj.get("oldParent"));
 						}
 
 						out.print(",");
-						out.print(parentRowObj.toString());
+						out.print(resourceObj.toString());
 					} else if (!isAdded(addedRow, resourceRowId) && hasChildDisguise) {
 						addedRow.add(resourceRowId);
 						if (debug) {
