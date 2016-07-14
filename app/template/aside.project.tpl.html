@@ -1,7 +1,7 @@
 <div class="aside" tabindex="-1" role="dialog" ng-clock style="">
     <div class="edit-panel-wrapper">
         <div class="col-wrapper" style="width: 25%;">
-            <div class="col-header" style="background-color: {{asideProject.model.color}};">
+            <div class="col-header" ng-class="asideProject.model.classes" style="background-color: {{asideProject.model.color}};">
                 PROJECT
             </div>
             <div class="col-field-wrapper">
@@ -19,10 +19,10 @@
                 </div>
             </div> -->
             <div class="col-field-wrapper">
-                <div class="form-group" style="width:160px;">
+                <div class="form-group" >
                     <label class="control-label">COLOR</label>
                     <div class="color-wrapper">
-                        <div class="sample-color" style="width:100px;">
+                        <div class="sample-color" style="width:200px;">
                             <div class="color-slot" ng-click="sampleColorsPicker.setProjectColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors"></div>
                         </div>
 
@@ -38,7 +38,7 @@
         </div>
 
         <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width: 25%;">
-            <div class="col-header" style="background-color: {{asideProject.model.color}};">
+            <div class="col-header" ng-class="asideProject.model.classes" style="background-color: {{asideProject.model.color}};">
                 CUSTOM DATA FIELDS
             </div>
             <div class="col-field-wrapper">
@@ -83,7 +83,7 @@
             </div> -->
         </div>
         <div class="col-wrapper" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2); width:50%;">
-            <div class="col-header" style="background-color: {{asideProject.model.color}};">
+            <div class="col-header" ng-class="asideProject.model.classes" style="background-color: {{asideProject.model.color}};">
 
             </div>
             <div class="col-field-wrapper">

@@ -27,7 +27,8 @@
     "angular-motion": "^0.4.4",
     "angular-color-picker": "angularjs-color-picker#^1.1.4",
     "angular-post-fix": "^0.1.0",
-    "angular-bootstrap-toggle-switch": "^0.5.6"
+    "angular-bootstrap-toggle-switch": "^0.5.6",
+    "ng-tags-input": "3.1.1"
   },
   "overrides": {
     "bootstrap": {

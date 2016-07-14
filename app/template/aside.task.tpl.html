@@ -1,7 +1,7 @@
 <div class="aside" tabindex="-1" role="dialog" ng-clock>
     <div class="edit-panel-wrapper">
-        <div class="col-wrapper option-block">
-            <div class="col-header" style="background-color: {{asideTask.model.color}};">
+        <div class="col-wrapper option-block medium">
+            <div class="col-header" ng-class="asideTask.model.classes" style="background-color: {{asideTask.model.color}};">
                 {{asideTask.row.model.height===undefined?'TASK':'PLAN'}}
             </div>
             <div class="col-field-wrapper">
@@ -20,17 +20,36 @@
                 </div>
             </div>
             <div class="col-field-wrapper">
-                <div class="form-group" style="width:160px;">
+                <div class="form-group" >
                     <label class="control-label">COLOR</label>
-                    <div class="color-wrapper">
-                        <div class="sample-color" style="width:100px;">
-                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors"></div>
+                    <div ng-hide="nextPalette" class="color-wrapper">
+                        <div class="sample-color" style="width:200px;">
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors1"></div>
                         </div>
-
                         <div class="custom-color">
+                          <button type="button" class="btn btn-default btn-next-palette" ng-click="nextPalette=!nextPalette" ><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+
+                        </div>
+                        <!-- <div class="custom-color">
                             <color-picker ng-model="color" color-picker-disabled="colorpicker.disabled" color-picker-format="colorpicker.format" color-picker-alpha="colorpicker.alpha" color-picker-swatch="colorpicker.swatch" color-picker-swatch-pos="colorpicker.swatchPos" color-picker-swatch-bootstrap="colorpicker.swatchBootstrap"
                                 color-picker-pos="colorpicker.pos" color-picker-case="colorpicker.case" color-picker-swatch-only="colorpicker.swatchOnly" color-picker-inline="colorpicker.inline" color-picker-on-change="colorpicker.onColorChange($event,color)"></color-picker>
+                        </div> -->
+
+
+                    </div>
+                    <div ng-hide="!nextPalette" class="color-wrapper">
+                      <div class="custom-color">
+                        <button type="button" class="btn btn-default btn-next-palette" ng-click="nextPalette=!nextPalette" ><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+
+                      </div>
+                        <div class="sample-color" style="width:200px;">
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors2"></div>
                         </div>
+
+                        <!-- <div class="custom-color">
+                            <color-picker ng-model="color" color-picker-disabled="colorpicker.disabled" color-picker-format="colorpicker.format" color-picker-alpha="colorpicker.alpha" color-picker-swatch="colorpicker.swatch" color-picker-swatch-pos="colorpicker.swatchPos" color-picker-swatch-bootstrap="colorpicker.swatchBootstrap"
+                                color-picker-pos="colorpicker.pos" color-picker-case="colorpicker.case" color-picker-swatch-only="colorpicker.swatchOnly" color-picker-inline="colorpicker.inline" color-picker-on-change="colorpicker.onColorChange($event,color)"></color-picker>
+                        </div> -->
 
 
                     </div>
@@ -41,8 +60,8 @@
             </div>
         </div>
         <div class="col-wrapper option-block big" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);">
-            <div class="col-header" style="background-color: {{asideTask.model.color}};">
-                TIMING
+            <div class="col-header" ng-class="asideTask.model.classes" style="background-color: {{asideTask.model.color}};">
+                DETAILS
             </div>
             <div class="col-field-wrapper">
 
@@ -74,6 +93,7 @@
 
             </div>
             <!-- <div class="col-field-wrapper">
+
                 <div class="form-group">
                     <label class="control-label">TASK ID</label>
                     <input type="text" class="form-control" ng-model="asideTask.model.id" style="width:300px;">
@@ -87,12 +107,6 @@
                     <input type="text" class="form-control" ng-model="asideTask.row.model.id" style="width:300px;">
                 </div>
             </div> -->
-        </div>
-        <div class="col-wrapper option-block big">
-            <div class="col-header" style="background-color: {{asideTask.model.color}};">
-                CUSTOM DATA FIELDS
-            </div>
-
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>PRIORITY</label>
@@ -109,14 +123,23 @@
                 </div>
 
             </div>
+        </div>
+        <div class="col-wrapper option-block big">
+            <div class="col-header" ng-class="asideTask.model.classes" style="background-color: {{asideTask.model.color}};">
+                CUSTOM DATA FIELDS
+            </div>
+
+
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>SUPERVISOR</label>
-                    <input type="text" class="form-control" ng-model="asideTask.model.supervisor">
+                    <tags-input ng-model="asideTask.model.supervisor"></tags-input>
+                    <!-- <input type="text" class="form-control" ng-model="asideTask.model.supervisor"> -->
                 </div>
                 <div class="form-group">
                     <label>MARKETING</label>
-                    <input type="text" class="form-control" ng-model="asideTask.model.marketing">
+                    <tags-input ng-model="asideTask.model.marketing"></tags-input>
+                    <!-- <input type="text" class="form-control" ng-model="asideTask.model.marketing"> -->
                 </div>
             </div>
             <div class="col-field-wrapper">
@@ -161,12 +184,12 @@
         </div>
         <div class="col-wrapper button-block" style="border-left-width: 1px; border-left-style: solid; border-left-color: rgba(88, 166, 123, 0.2);width:22%;">
             <!-- bug row span-->
-            <div class="col-header" style="background-color: {{asideTask.model.color}};">
+            <div class="col-header" ng-class="asideTask.model.classes" style="background-color: {{asideTask.model.color}};">
 
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidData(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidDate(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
                     <div confirm-delete-button on-confirm="taskDelete(asideTask);$hide()"></div>
                     <button type="button" class="btn btn-default" ng-model="button.cancel" ng-if="!asideTask.model.isNew" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
 

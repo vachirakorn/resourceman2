@@ -25,7 +25,8 @@ angular.module('angularGanttDemoApp', [
     'ngAnimate',
     'mgcrea.ngStrap',
     'color.picker',
-    'ngSanitize'
+    'ngSanitize',
+    'ngTagsInput'
 ]).config(['$compileProvider', '$asideProvider', '$alertProvider', function($compileProvider, $asideProvider, $alertProvider) {
     $compileProvider.debugInfoEnabled(false); // Remove debug info (angularJS >= 1.3)
     angular.extend($asideProvider.defaults, {

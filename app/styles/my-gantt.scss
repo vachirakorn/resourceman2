@@ -1,4 +1,8 @@
 $light-grey: #f2f2f2;
+$dark-grey: #1a1a1a;
+body{
+  font-family: 'Open Sans', sans-serif;
+}
 .gantt-task-info{
   color:black;
 }
@@ -99,23 +103,33 @@ $light-grey: #f2f2f2;
                 overflow: hidden;
                 width: auto;
             }
+            &.medium{
+                width: 300px;
+            }
             &.big {
                 width: 500px;
             }
             height: 100%;
             .col-header {
                 background-color: #888;
-                color: #fff;
+
                 width: 100%;
                 height: 22px;
                 margin: 0 0 4px;
                 padding-left: 8px;
-                font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-                font-size: 14px;
+                font-family: 'Open Sans', sans-serif;
+                font-weight: bold;
+                font-size: 15px;
                 line-height: 24px;
                 max-width: none;
                 overflow: hidden;
                 box-shadow: 0 1px 1px #999;
+                &.black{
+                  color: $dark-grey;
+                }
+                &.white{
+                  color: #fff;
+                }
             }
             .col-field-wrapper {
                 display: flex;
@@ -146,6 +160,10 @@ $light-grey: #f2f2f2;
                         }
                         .custom-color {
                             padding: 1px;
+                        }
+                        .btn-next-palette{
+                            width: 40px;
+                            height: 60px;
                         }
                     }
                     .btn {

@@ -397,14 +397,14 @@ angular.module('angularGanttDemoApp')
                         }
 
                     });
-                    api.dependencies.on.add($scope, function(dependency) {
-                        console.log('dependencies change');
-                        $scope.taskSave(dependency.task, 'autosave');
-                    });
-                    api.dependencies.on.remove($scope, function(dependency) {
-                        console.log('remove dependencies');
-                        $scope.taskSave(dependency.task, 'autosave');
-                    });
+                    // api.dependencies.on.add($scope, function(dependency) {
+                    //     console.log('dependencies change');
+                    //     $scope.taskSave(dependency.task, 'autosave');
+                    // });
+                    // api.dependencies.on.remove($scope, function(dependency) {
+                    //     console.log('remove dependencies');
+                    //     $scope.taskSave(dependency.task, 'autosave');
+                    // });
 
                     // When gantt is ready, load data.
                     // `data` attribute could have been used too.
@@ -544,7 +544,7 @@ angular.module('angularGanttDemoApp')
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
                     filterName: rowModel.name,
-                    content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    content: ' <i class=\"{{row.model.isSubRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
@@ -563,7 +563,7 @@ angular.module('angularGanttDemoApp')
                     order: getLastOrder('resource') + 1, //append to the bottom of resources list
                     name: ' ',
                     filterName: rowModel.name,
-                    content: '<i class=\"{{row.model.parent===\'\'?\'fa fa-user\':\'\'}}\"></i> {{row.model.name}}',
+                    content: ' <i class=\"{{row.model.isSubRow?\'fa fa-code-fork\':\'fa fa-user\'}}\"></i> {{row.model.name}}',
                     columnKeys: ['model.shortcut'],
                     columnContents: {
                         'model.shortcut': '<div row-shortcut row=\"row\" on-add=\"scope.addSubResource(row)\" on-delete=\"scope.resourceDelete(row)\"></div>'
@@ -1016,7 +1016,7 @@ angular.module('angularGanttDemoApp')
         // Remove data action
         $scope.remove = function() {
             $scope.api.data.remove(dataToRemove);
-            $scope.api.dependencies.refresh();
+            // $scope.api.dependencies.refresh();
         };
 
         $scope.cancel = function(type) {
@@ -1277,9 +1277,9 @@ angular.module('angularGanttDemoApp')
 
             return 40 * zoom;
         };
-        $scope.isValidData = function(from, to) {
+        $scope.isValidDate = function(from, to) {
             //  console.log(moment(from) < moment(to));
-            return moment(from) <= moment(to);
+            return moment(from) <= moment(to) && moment(to).diff(moment(from),'days');
         };
 
 
@@ -1350,8 +1350,20 @@ angular.module('angularGanttDemoApp')
         $scope.teams = ['Front', 'Back', 'Android', 'iPhone', 'iPad', 'Orderstat', 'UM', 'Technical Chart', 'MI6', 'Gen5', 'Ereport', 'JSP', 'Piwik', 'Sense', 'Noti', 'Seos', ' Seosd', 'DataClient', 'SetSmart', 'Click2win']
 
         $scope.sampleColorsPicker = {
-            sampleColors: ['#1abc9c', '#49d049', '#3498db', '#9b59b6', '#3d566e',
-                '#f1c40f', '#e67e22', '#e74c3c', '#e678b6', '#95a5a6'
+            sampleColors1: ['#FF0000', '#FF4200', '#FF7E00', '#FFD100', '#FDFF00',
+                '#39C3F2', '#2BABDC', '#1E95B5', '#1D7AA5', '#035793',
+                '#24555b', '#3C9198', '#49AFA4', '#67C0A4', '#A5DDB0',
+                '#FAAEA1', '#F57A73', '#E26352',  '#D25052', '#6B3630',
+                '#9A2144', '#842344', '#741E3B', '#532F55', '#825393',
+                '#CBCBCB', '#B2B2B2', '#999999', '#808080', '#676767'
+
+            ],sampleColors2: ['#ffb5e8', '#ff9cee', '#ffccf9', '#fcc2ff', '#f6a6ff',
+                '#b28dff', '#c5a3ff', '#d5aaff', '#ecd4ff', '#fbe4ff',
+                '#dcd3ff', '#a79aff', '#b5b9ff', '#97a2ff', '#afcbff',
+                '#aff8db', '#c4faf8', '#85e3ff',  '#ace7ff', '#6eb5ff',
+                '#bffcc6', '#dbffd6', '#f3ffe3', '#e7ffac', '#ffffd1',
+                '#ffc9de', '#ffabab', '#ffbebc', '#ffcbc1', '#fff5ba'
+
             ],
             setTaskColor: function(color) {
                 $scope.asideTask.model.color = color;

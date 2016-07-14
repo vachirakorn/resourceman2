@@ -1,5 +1,5 @@
 <div class="alert" ng-class="[type ? 'alert-' + type : null]">
     <button type="button" style="margin-left:10px;" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
-        <span ng-bind-html="content"></span><button class="btn btn-default" ng-click="reload();$hide()">Reload</button>
+        <span ng-bind-html="content"></span><button class="btn btn-default" ng-click="reload();$hide()"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> Reload</button>
 
 </div>
