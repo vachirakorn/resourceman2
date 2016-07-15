@@ -121,7 +121,7 @@ angular.module('angularGanttDemoApp')
             columns: ['model.name'],
             treeTableColumns: ['model.name'],
             columnsHeaders: {
-                'model.name': 'Name',
+                'model.name': 'Resource',
                 'from': 'From',
                 'to': 'To',
                 'model.priorityLevel': 'Prioritys',
@@ -149,9 +149,9 @@ angular.module('angularGanttDemoApp')
 
                 }
             },
-            treeHeaderContent: '<i class="fa fa-align-justify"></i> {{getHeader()}}',
+            treeHeaderContent: '<i class="fa fa-group"></i> Resource',
             columnsHeaderContents: {
-                'model.name': '<i class="fa fa-align-justify"></i> {{getHeader()}}',
+                'model.name': '<i class="fa fa-group"></i> {{getHeader()}}',
                 'from': '<i class="fa fa-calendar"></i> {{getHeader()}}',
                 'to': '<i class="fa fa-calendar"></i> {{getHeader()}}',
                 'model.id': '<div style="text-align:center;width:30px;"><i class="fa fa-bolt"></i></div>{{getHeader()}}'

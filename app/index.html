@@ -147,7 +147,7 @@
 
 
                                                     <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-search"></i> Zoom</label>
+                                                        <label class="control-label"><i class="fa fa-arrows-h" aria-hidden="true"></i> Zoom </label>
                                                         <br>
                                                         <input ng-disabled="!options.width" type="number" ng-model="options.zoom" step="0.1" min="0.1" max="5" class="form-control" />
                                                     </div>
@@ -279,11 +279,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group text-center">
-                                                        <label class="control-label"><i class="fa fa-crop"></i> Zoom</label>
+                                                        <label class="control-label"><i class="fa fa-crop"></i> Scroll</label>
                                                         <br>
                                                         <div class="btn-group" bs-checkbox-group>
                                                             <!-- <button type="button" class="btn btn-default" ng-model="options.maxHeight" bs-checkbox>Height</button> -->
-                                                            <button ng-disabled="!canAutoWidth(options.scale)" type="button" class="btn btn-default" ng-model="options.width" bs-checkbox>Moveable</button>
+                                                            <button ng-disabled="!canAutoWidth(options.scale)" type="button" class="btn btn-default" ng-model="options.width" bs-checkbox>Scrollable</button>
                                                         </div>
                                                     </div>
 
