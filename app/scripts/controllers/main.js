@@ -173,6 +173,7 @@ angular.module('angularGanttDemoApp')
             groupDisplayMode: 'disabled',
             resourceView: true,
             filterTask: '',
+            filterSupervisor: '',
             filterRow: '',
             timeFrames: {
                 'day': {
@@ -235,14 +236,27 @@ angular.module('angularGanttDemoApp')
                     name: 'New task', // Name shown on top of each task.
                     project: 'Unassigned project', //default project name of the task
                     color: '#49d049', // Color of the task in HEX format (Optional).
-                    supervisor:[{
-                      text:''
-                    }],
-                    marketing:'',
-                    manday:'',
+                    supervisor: [],
+                    marketing: [],
+                    manday: '',
                     isDrawing: true
                 };
 
+
+            },
+            taskComparator: function(task, expectedName, expectedSupervisor) {
+              console.log(task);
+                var taskModel = task.model;
+                if (!task) return;
+                if (!expectedName && !expectedSupervisor) return true;
+                else {
+                    var expectedName = expectedName.toLowerCase();
+                    var expectedSupervisor = expectedSupervisor.toLowerCase();
+                    var termInName = taskModel.name.toLowerCase().indexOf(expectedName) > -1;
+                    var termInText = taskModel.supervisor.text.toLowerCase().indexOf(expectedSupervisor) > -1;
+                    return termInName || termInText;
+
+                }
 
             },
             api: function(api) {
@@ -374,7 +388,7 @@ angular.module('angularGanttDemoApp')
 
                     });
                     api.rows.on.add($scope, function(row) {
-                        if (row.model.isNew === undefined || !row.model.isNew ) return;
+                        if (row.model.isNew === undefined || !row.model.isNew) return;
                         console.log('autosave new added');
                         //row.model.isNew = undefined;
                         checkAutoSave();
@@ -384,7 +398,7 @@ angular.module('angularGanttDemoApp')
                             $scope.projectTempModel = angular.copy(row.model);
                         }
 
-                        if ($scope.options.resourceView  && !row.model.isChildRow) {
+                        if ($scope.options.resourceView && !row.model.isChildRow) {
                             $scope.asideResource = row; //TODO:CHANGE NAME TO asideResource
                             $scope.resourceSave(row, 'autosave');
                             resourceAside.$promise.then(function() {
@@ -392,7 +406,7 @@ angular.module('angularGanttDemoApp')
                             });
                             isAsideOpened = true;
 
-                        }else if($scope.options.resourceView && row.model.isChildRow){
+                        } else if ($scope.options.resourceView && row.model.isChildRow) {
                             $scope.resourceSave(row, 'autosave');
                         } else {
                             $scope.asideProject = row;
@@ -1320,6 +1334,7 @@ angular.module('angularGanttDemoApp')
             if (!isFirstLoad) $scope.load();
 
         });
+
 
 
 

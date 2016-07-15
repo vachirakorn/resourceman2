@@ -74,7 +74,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                       <div ng-hide="true" class="panel-group" bs-collapse>
+                        <div ng-hide="true" class="panel-group" bs-collapse>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
@@ -189,7 +189,7 @@
 
 
 
-                                                   <div class="form-group text-center">
+                                                    <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-database"></i>Add Overlapping Task</label>
                                                         <br>
                                                         <div class="form-group">
@@ -221,11 +221,11 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="form-inline">
-                                                  <div class="form-group text-center">
-                                                      <label class="control-label"><i class="fa fa-search"></i> Scale</label>
-                                                      <br>
-                                                      <button type="button" style="width: 5em; text-align: left" class="btn btn-default" ng-model="options.scale" bs-options="s for s in ['minute', '5 minutes', 'hour', '3 hours', 'day', 'week', '2 weeks', 'month', 'quarter', '6 months', 'year']" bs-select></button>
-                                                  </div>
+                                                    <div class="form-group text-center">
+                                                        <label class="control-label"><i class="fa fa-search"></i> Scale</label>
+                                                        <br>
+                                                        <button type="button" style="width: 5em; text-align: left" class="btn btn-default" ng-model="options.scale" bs-options="s for s in ['minute', '5 minutes', 'hour', '3 hours', 'day', 'week', '2 weeks', 'month', 'quarter', '6 months', 'year']" bs-select></button>
+                                                    </div>
                                                     <div class="form-group input-append text-center">
                                                         <label class="control-label"><i class="fa fa-filter"></i> Filter Rows</label>
                                                         <br>
@@ -349,7 +349,7 @@
                                     </div>
                                     <div class="panel-collapse" bs-collapse-target>
                                         <div class="panel-body">
-                                            <div gantt data="data" timespans="timespans" show-side="options.labelsEnabled" daily="options.daily" filter-task="{'name': options.filterTask}" filter-row="{'filterName':options.filterRow,'team': options.filterTeam}" sort-mode="options.sortMode" view-scale="options.scale"
+                                            <div gantt data="data" timespans="timespans" show-side="options.labelsEnabled" daily="options.daily" filter-task="{'name':options.filterTask,'supervisor':{'text':options.filterSupervisor}}"  filter-row="{'filterName':options.filterRow,'team': options.filterTeam}" sort-mode="options.sortMode" view-scale="options.scale"
                                                 column-width="getColumnWidth(options.width, options.scale, options.zoom)" auto-expand="options.autoExpand" task-out-of-range="options.taskOutOfRange" from-date="options.fromDate" to-date="options.toDate" allow-side-resizing="options.allowSideResizing"
                                                 task-content="options.taskContentEnabled ? options.taskContent : undefined" row-content="options.rowContentEnabled ? options.rowContent : undefined" current-date="options.currentDate" current-date-value="options.currentDateValue"
                                                 headers="options.width && options.shortHeaders || options.longHeaders" max-height="options.maxHeight && 300 || 0" time-frames="options.timeFrames" date-frames="options.dateFrames" time-frames-working-mode="options.timeFramesWorkingMode"
@@ -377,6 +377,7 @@
 
 
                                         </div> -->
+
                                         <div class="panel-body" style="height:auto;" ng-style="(eachdata.height==='3em' || eachdata.parent==='') && {'background-color':'#f2f2f2'}" ng-repeat="eachdata in data track by $index">
                                             {{eachdata}}
 
@@ -425,7 +426,7 @@
         <script src="../bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
         <script src="../bower_components/moment/moment.js"></script>
         <script src="../bower_components/angular-moment/angular-moment.js"></script>
-        <script src="../bower_components/angular-gantt/assets/angular-gantt.js"></script>
+        <script src="scripts/lib/resourceman-gantt.js"></script>
         <script src="../bower_components/angular-gantt/assets/angular-gantt-plugins.js"></script>
         <script src="../bower_components/moment-range/dist/moment-range.js"></script>
         <script src="../bower_components/css-element-queries/src/ElementQueries.js"></script>
