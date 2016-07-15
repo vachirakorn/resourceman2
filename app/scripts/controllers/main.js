@@ -1323,9 +1323,11 @@ angular.module('angularGanttDemoApp')
         $scope.$watch('options.resourceView', function(resourceView) {
             console.log(resourceView);
             if (!resourceView) {
+                $scope.options.treeHeaderContent= '<i class="fa fa-sitemap"></i> Project';
                 $scope.options.treeTableColumns = ['model.shortcut', 'model.priorityLevel', 'from', 'to'];
                 $scope.selected = 'projectView';
             } else {
+                $scope.options.treeHeaderContent= '<i class="fa fa-group"></i> Resource';
                 $scope.options.treeTableColumns = ['model.shortcut'];
                 $scope.selected = 'resourceView';
             }
