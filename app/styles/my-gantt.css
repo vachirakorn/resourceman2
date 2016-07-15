@@ -1,0 +1,146 @@
+body {
+  font-family: 'Open Sans', sans-serif; }
+
+.gantt-task-info {
+  color: black; }
+
+.white {
+  color: white; }
+
+.gantt-row-milestone.black {
+  color: #333333; }
+
+.gantt-row-milestone.white {
+  color: white; }
+
+.black {
+  color: #333333; }
+
+.search {
+  margin-left: 10px; }
+
+.deleteConfirmation .btn {
+  border-radius: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
+
+.dropdown-menu {
+  position: fixed;
+  z-index: 1060; }
+
+.color-picker-wrapper {
+  position: fixed;
+  height: 40px; }
+  .color-picker-wrapper .color-picker-input-wrapper {
+    height: 100%; }
+
+.edit-panel-box {
+  height: 200px;
+  width: 100%; }
+
+.alert-success {
+  background-color: #dff0d8;
+  border-color: #468847;
+  color: #468847; }
+
+.alert-error {
+  background-color: #f2dede;
+  border-color: #b94a48;
+  color: #b94a48; }
+
+.alert.center {
+  text-align: center;
+  right: 0px;
+  top: 200px;
+  left: 0px; }
+
+.btn-info.active {
+  background-color: limegreen; }
+
+.btn_red.active {
+  background-color: red; }
+
+.aside {
+  position: fixed;
+  z-index: 9999;
+  overflow: hidden;
+  min-width: 320px;
+  width: 100%;
+  min-height: 230px;
+  height: 25%;
+  max-height: 250px;
+  background: white; }
+  .aside .edit-panel-wrapper {
+    position: relative;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: 100%; }
+    .aside .edit-panel-wrapper .col-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      min-width: 250px;
+      height: 100%; }
+      .aside .edit-panel-wrapper .col-wrapper.option-block {
+        float: left; }
+      .aside .edit-panel-wrapper .col-wrapper.button-block {
+        overflow: hidden;
+        width: auto; }
+      .aside .edit-panel-wrapper .col-wrapper.medium {
+        width: 300px; }
+      .aside .edit-panel-wrapper .col-wrapper.big {
+        width: 500px; }
+      .aside .edit-panel-wrapper .col-wrapper .col-header {
+        background-color: #888;
+        width: 100%;
+        height: 22px;
+        margin: 0 0 4px;
+        padding-left: 8px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: bold;
+        font-size: 15px;
+        line-height: 24px;
+        max-width: none;
+        overflow: hidden;
+        box-shadow: 0 1px 1px #999; }
+        .aside .edit-panel-wrapper .col-wrapper .col-header.black {
+          color: #1a1a1a; }
+        .aside .edit-panel-wrapper .col-wrapper .col-header.white {
+          color: #fff; }
+      .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper {
+        display: flex;
+        flex-direction: row;
+        padding: 5px 5px 0 10px;
+        width: 100%; }
+        .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group {
+          margin-right: 5px; }
+          .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .color-wrapper {
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 100%; }
+            .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .color-wrapper .sample-color {
+              display: flex;
+              flex-direction: row;
+              overflow: hidden;
+              justify-content: flex-start;
+              align-items: flex-start;
+              flex-wrap: wrap; }
+              .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .color-wrapper .sample-color .color-slot {
+                width: 20px;
+                height: 20px;
+                border: 1px solid black; }
+            .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .color-wrapper .custom-color {
+              padding: 1px; }
+            .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .color-wrapper .btn-next-palette {
+              width: 40px;
+              height: 60px; }
+          .aside .edit-panel-wrapper .col-wrapper .col-field-wrapper .form-group .btn {
+            border-radius: 0;
+            height: 28px;
+            width: 100px;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }

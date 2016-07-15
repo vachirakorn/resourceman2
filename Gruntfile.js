@@ -160,9 +160,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
+          cwd: '<%= yeoman.app %>/styles/',
+          src: '**/*.css',
+          dest: '<%= yeoman.app %>/styles/'
         }]
       }
     },
@@ -170,7 +170,7 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
-        src: ['<%= yeoman.app %>/index.html'],
+        src: ['app/index.html'],
         ignorePath:  /\.\.\//,
         exclude: [/bower_components\/jquery/, /bower_components\/bootstrap\/.*\.js/]
       },
@@ -238,7 +238,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '<%= yeoman.app %>/styles',
           src: ['{,*/}*.scss'],
-          dest: '.tmp/styles',
+          dest: 'app/styles',
           ext: '.css'
         }]
       }
@@ -365,7 +365,7 @@ module.exports = function (grunt) {
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
+        dest: '<%= yeoman.app %>/styles/',
         src: ['{,*/}*.css','{,*/}*.scss']
       }
     },

@@ -235,6 +235,11 @@ angular.module('angularGanttDemoApp')
                     name: 'New task', // Name shown on top of each task.
                     project: 'Unassigned project', //default project name of the task
                     color: '#49d049', // Color of the task in HEX format (Optional).
+                    supervisor:[{
+                      text:''
+                    }],
+                    marketing:'',
+                    manday:'',
                     isDrawing: true
                 };
 
