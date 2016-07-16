@@ -163,11 +163,15 @@
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
 		resource.update(query, update, true, false); //upsert
 		DBCursor cursor = resource.find(new BasicDBObject().append("parent", resourceRowId));
+
+		//update children row filterName and team
 		while (cursor.hasNext()) {
 			DBObject resourceObj = cursor.next();
 			resourceObj.put("team", rowObj.get("team").toString());
 			resourceObj.put("filterName", rowObj.get("name").toString());
-
+			update = new BasicDBObject().append("$set", resourceObj);
+			query = new BasicDBObject().append("id", resourceObj.get("id"));
+			resource.update(query, update, true, false); //upsert
 		}
 
 	} else if (mode.equals("projectSave")) {
