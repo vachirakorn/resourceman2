@@ -1,6 +1,16 @@
 body {
   font-family: 'Open Sans', sans-serif; }
 
+.gantt-foreground-col-current-date {
+  background-color: pink;
+  opacity: 0.6; }
+
+.untrack {
+  color: #1a1a1a; }
+
+.fa-eye-slash:hover {
+  color: #676767; }
+
 .gantt-task-info {
   color: black; }
 
@@ -53,11 +63,24 @@ body {
   top: 200px;
   left: 0px; }
 
-.btn-info.active {
-  background-color: limegreen; }
+.btn-info, .btn-info:focus {
+  background-color: #676767;
+  border-color: #333333;
+  outline: none; }
 
-.btn_red.active {
-  background-color: red; }
+.btn-info:hover {
+  background-color: #595959;
+  border-color: #333333; }
+
+.btn-info.active, .btn-info.active:focus {
+  color: #fff;
+  background-color: limegreen;
+  border-color: #1b6d85;
+  outline: none; }
+
+.btn-info.active:hover {
+  background-color: #00b300;
+  border-color: #333333; }
 
 .aside {
   position: fixed;

@@ -299,24 +299,26 @@
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-user-plus"></i> Resources</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-disabled="!options.resourceView" ng-click="addResource()">+Add new</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="options.view==='project'" ng-click="addResource()">+Add new</button>
                                                     </div>
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-briefcase"></i> Project</label>
                                                         <br>
-                                                        <button type="button" class="btn btn-default" ng-disabled="options.resourceView" ng-click="addProject()">+Add project</button>
+                                                        <button type="button" class="btn btn-default" ng-disabled="options.view==='resource'" ng-click="addProject()">+Add project</button>
                                                     </div>
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-pencil-square-o"></i> Views</label>
                                                         <br>
                                                         <!-- <button type="button" class="btn btn-default" ng-model="!options.projectView" ng-click="load()" bs-checkbox>Resource</button> -->
-                                                        <label class="btn btn-default btn-info {{selected==='resourceView'?'active':''}}">
-                                                            <input ng-value="true" type="radio" data-ng-model="options.resourceView"> <i class="fa fa-users" aria-hidden="true"></i> Resource
-                                                        </label>
-                                                        <label class="btn btn-default btn-info {{selected==='projectView'?'active':''}}">
-                                                            <input ng-value="false" type="radio" data-ng-model="options.resourceView"> <i class="fa fa-sitemap" aria-hidden="true"></i> Project
-                                                        </label>
-
+                                                        <button class="btn btn-default btn-info {{selected==='resource'?'active':''}}" ng-click="options.view='resource'">
+                                                            <i class="fa fa-users" aria-hidden="true"></i> Resource
+                                                        </button>
+                                                        <button class="btn btn-default btn-info {{selected==='project'?'active':''}}" ng-click="options.view='project'">
+                                                            <i class="fa fa-sitemap" aria-hidden="true"></i> Project
+                                                        </button>
+                                                        <button class="btn btn-default btn-info {{selected==='summary'?'active':''}}" ng-click="options.view='summary'">
+                                                            <i class="fa fa-sitemap" aria-hidden="true"></i> Summary
+                                                        </button>
                                                     </div>
                                                     <div class="form-group text-center">
                                                         <label class="control-label"><i class="fa fa-database"></i> Data actions</label>
@@ -338,6 +340,54 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12" ng-if="options.view==='summary'">
+                        <div class="panel-group" bs-collapse>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                    <a href="" bs-collapse-toggle><i class="fa fa-eye" aria-hidden="true"></i> Tracking board</a>
+                                </h4>
+                                </div>
+                                <div class="panel-collapse" bs-collapse-target>
+                                    <div class="panel-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                              <table class="table table-hover">
+                                                  <thead>
+                                                      <tr>
+                                                          <th>Task</th>
+                                                          <th>Developer</th>
+                                                          <th>Project</th>
+                                                          <th><i class="fa fa-calendar" aria-hidden="true"></i> From</th>
+                                                          <th><i class="fa fa-calendar" aria-hidden="true"></i> To</th>
+                                                          <th><i class="fa fa-clock-o" aria-hidden="true"></i> Timeleft</th>
+                                                          <th>Untrack</th>
+                                                      </tr>
+                                                  </thead>
+                                                  <tbody ng-repeat="row in data " ng-init="parentIndex = $index">
+
+                                                      <tr ng-class="trackClass(task.to)" ng-repeat="task in row.tasks track by $index" ng-if="task.isTrack">
+                                                          <td>{{task.name}}</td>
+                                                          <td>{{row.filterName}}</td>
+                                                          <td>{{task.project}}</td>
+                                                          <th>{{task.from | amDateFormat:'DD.MMM.YYYY'}}</th>
+                                                          <th>{{task.to | amDateFormat:'DD.MMM.YYYY'}}</th>
+                                                          <td>{{timeleft(task.to)}}</td>
+                                                          <td><i class="fa fa-eye-slash" ng-click="untrack(task,row)" aria-hidden="true"></i></td>
+                                                      </tr>
+
+                                                  </tbody>
+                                              </table>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row top-buffer">
                         <div class="col-md-12">
                             <div class="panel-group" bs-collapse>
@@ -347,13 +397,15 @@
                                     <a href="" bs-collapse-toggle>Gantt</a>
                                 </h4>
                                     </div>
+
                                     <div class="panel-collapse" bs-collapse-target>
                                         <div class="panel-body">
-                                            <div gantt data="data" timespans="timespans" show-side="options.labelsEnabled" daily="options.daily" filter-task="{'name':options.filterTask,'supervisor':{'text':options.filterSupervisor}}"  filter-row="{'filterName':options.filterRow,'team': options.filterTeam}" sort-mode="options.sortMode" view-scale="options.scale"
-                                                column-width="getColumnWidth(options.width, options.scale, options.zoom)" auto-expand="options.autoExpand" task-out-of-range="options.taskOutOfRange" from-date="options.fromDate" to-date="options.toDate" allow-side-resizing="options.allowSideResizing"
-                                                task-content="options.taskContentEnabled ? options.taskContent : undefined" row-content="options.rowContentEnabled ? options.rowContent : undefined" current-date="options.currentDate" current-date-value="options.currentDateValue"
-                                                headers="options.width && options.shortHeaders || options.longHeaders" max-height="options.maxHeight && 300 || 0" time-frames="options.timeFrames" date-frames="options.dateFrames" time-frames-working-mode="options.timeFramesWorkingMode"
-                                                time-frames-non-working-mode="options.timeFramesNonWorkingMode" time-frames-magnet="options.timeFramesMagnet" api="options.api" column-magnet="options.columnMagnet" template-url="template/mygantt.tmpl.html">
+                                            <div gantt data="data" timespans="timespans" show-side="options.labelsEnabled" daily="options.daily" filter-task="{'name':options.filterTask,'supervisor':{'text':options.filterSupervisor}}" filter-row="{'filterName':options.filterRow,'team': options.filterTeam}"
+                                                sort-mode="options.sortMode" view-scale="options.scale" column-width="getColumnWidth(options.width, options.scale, options.zoom)" auto-expand="options.autoExpand" task-out-of-range="options.taskOutOfRange" from-date="options.fromDate"
+                                                to-date="options.toDate" allow-side-resizing="options.allowSideResizing" task-content="options.taskContentEnabled ? options.taskContent : undefined" row-content="options.rowContentEnabled ? options.rowContent : undefined"
+                                                current-date="options.currentDate" current-date-value="options.currentDateValue" headers="options.width && options.shortHeaders || options.longHeaders" max-height="options.maxHeight && 300 || 0" time-frames="options.timeFrames"
+                                                date-frames="options.dateFrames" time-frames-working-mode="options.timeFramesWorkingMode" time-frames-non-working-mode="options.timeFramesNonWorkingMode" time-frames-magnet="options.timeFramesMagnet" api="options.api"
+                                                column-magnet="options.columnMagnet" template-url="template/mygantt.tmpl.html">
                                                 <gantt-tree enabled="options.sideMode === 'Tree' || options.sideMode === 'TreeTable'" header-content="options.treeHeaderContent" keep-ancestor-on-filter-row="true">
                                                 </gantt-tree>
                                                 <gantt-table enabled="options.sideMode === 'Table' || options.sideMode === 'TreeTable'" columns="options.sideMode === 'TreeTable' ? options.treeTableColumns : options.columns" headers="options.columnsHeaders" classes="options.columnsClasses" formatters="options.columnsFormatters"
@@ -380,6 +432,9 @@
 
                                         <div class="panel-body" style="height:auto;" ng-style="(eachdata.height==='3em' || eachdata.parent==='') && {'background-color':'#f2f2f2'}" ng-repeat="eachdata in data track by $index">
                                             {{eachdata}}
+
+                                        </div>
+                                        <div id="test">
 
                                         </div>
 
@@ -435,6 +490,7 @@
         <script src="../bower_components/tinycolor/tinycolor.js"></script>
         <script src="../bower_components/angular-color-picker/dist/angularjs-color-picker.js"></script>
         <script src="../bower_components/ng-tags-input/ng-tags-input.js"></script>
+        <script src="../bower_components/angular-scroll/angular-scroll.js"></script>
 
 
 
@@ -447,6 +503,7 @@
         <script src="scripts/directives/confirmDelete.js"></script>
         <script src="scripts/directives/rowShortcut.js"></script>
         <script src="scripts/directives/ng-really.js"></script>
+        <script src="scripts/directives/focus.js"></script>
         <!-- <script src="scripts/services/sample.js"></script> -->
 
         <!-- endbuild -->

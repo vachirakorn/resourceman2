@@ -119,6 +119,7 @@
 
 		String resourceRowId = request.getParameter("id");
 		String tasks = request.getParameter("tasks");
+		DBObject taskObj = (DBObject) JSON.parse(tasks);
 
 		if (debug) {
 			System.out.println("\nTASK SAVE");
@@ -126,18 +127,15 @@
 			System.out.println("SAVE TO ROW ID: " + resourceRowId);
 		}
 
-		BasicDBObject update = new BasicDBObject();
-		update.append("$set", new BasicDBObject().append("tasks", JSON.parse(tasks)));
+		BasicDBObject update = new BasicDBObject().append("$set",new BasicDBObject().append("tasks",taskObj));
 		BasicDBObject query = new BasicDBObject().append("id", resourceRowId);
 		DBObject findRowID = project.findOne(query);
 
 		if (findRowID == null) {
-			if (debug)
-				System.out.println("SAVE IN RESOURCE");
+			if (debug)System.out.println("SAVE IN RESOURCE");
 			resource.update(query, update);
 		} else {
-			if (debug)
-				System.out.println("SAVE IN PROJECT");
+			if (debug)System.out.println("SAVE IN PROJECT");
 			project.update(query, update);
 		}
 

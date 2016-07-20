@@ -7,7 +7,8 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideResource.model.name" >
+                    <input type="text" class="form-control" ng-model="asideResource.model.name" placeholder="New resource" auto-focus>
+                    <span style="color:red;">{{asideResource.model.name===''?'required':''}}</span>
                 </div>
 
             </div>
@@ -72,9 +73,9 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-model="button.save" ng-click="resourceSave(asideResource,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-disabled="asideResource.model.name===''" ng-click="resourceSave(asideResource,'save');$hide()" >Save</button>
                     <div confirm-delete-button on-confirm="resourceDelete(asideResource);$hide()"></div>
-                    <button type="button" class="btn btn-default" ng-if="!asideResource.model.isNew" ng-model="button.cancel" ng-click="cancel('row');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-if="!asideResource.model.isNew" ng-click="cancel('resource');$hide()" >Cancel</button>
 
                 </div>
             </div>

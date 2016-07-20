@@ -26,7 +26,8 @@ var app = angular.module('angularGanttDemoApp', [
     'mgcrea.ngStrap',
     'color.picker',
     'ngSanitize',
-    'ngTagsInput'
+    'ngTagsInput',
+    'duScroll'
 ]);
 app.config(['$compileProvider', '$asideProvider', '$alertProvider', function($compileProvider, $asideProvider, $alertProvider) {
     $compileProvider.debugInfoEnabled(false); // Remove debug info (angularJS >= 1.3)

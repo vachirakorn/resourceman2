@@ -3,6 +3,17 @@ $dark-grey: #1a1a1a;
 body{
   font-family: 'Open Sans', sans-serif;
 }
+.gantt-foreground-col-current-date {
+    background-color: pink;
+    opacity: 0.6
+}
+.untrack{
+  color:$dark-grey;
+
+}
+.fa-eye-slash:hover{
+  color:lighten($dark-grey,30);
+}
 .gantt-task-info{
   color:black;
 }
@@ -67,12 +78,25 @@ body{
 
   //margin-bottom: 250px;
 }
-.btn-info.active {
+.btn-info, .btn-info:focus {
+    background-color: #676767;
+    border-color: #333333;
+    outline: none;
+}
+.btn-info:hover {
+    background-color: #595959;
+    border-color: #333333;
+}
+.btn-info.active, .btn-info.active:focus {
+    color: #fff;
     background-color: limegreen;
-    }
-.btn_red.active {
-  background-color: red;
-   }
+    border-color: #1b6d85;
+    outline: none;
+}
+.btn-info.active:hover {
+    background-color: #00b300;
+    border-color: #333333;
+}
 .aside {
     position: fixed;
     z-index: 9999;

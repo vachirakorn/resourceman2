@@ -7,7 +7,7 @@
             <div class="col-field-wrapper">
                 <div class="form-group">
                     <label>LABEL</label>
-                    <input type="text" class="form-control" ng-model="asideTask.model.name">
+                    <input type="text" id="name" class="form-control" ng-model="asideTask.model.name" placeholder="New task" auto-focus>
                 </div>
             </div>
             <div class="col-field-wrapper" ng-if="asideTask.row.height===undefined">
@@ -24,7 +24,7 @@
                     <label class="control-label">COLOR</label>
                     <div ng-hide="nextPalette" class="color-wrapper">
                         <div class="sample-color" style="width:200px;">
-                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors1"></div>
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette"></div>
                         </div>
                         <div class="custom-color">
                           <button type="button" class="btn btn-default btn-next-palette" ng-click="nextPalette=!nextPalette" ><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
@@ -43,13 +43,13 @@
 
                       </div>
                         <div class="sample-color" style="width:200px;">
-                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.sampleColors2"></div>
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette2"></div>
                         </div>
 
-                        <!-- <div class="custom-color">
+                        <div class="custom-color">
                             <color-picker ng-model="color" color-picker-disabled="colorpicker.disabled" color-picker-format="colorpicker.format" color-picker-alpha="colorpicker.alpha" color-picker-swatch="colorpicker.swatch" color-picker-swatch-pos="colorpicker.swatchPos" color-picker-swatch-bootstrap="colorpicker.swatchBootstrap"
                                 color-picker-pos="colorpicker.pos" color-picker-case="colorpicker.case" color-picker-swatch-only="colorpicker.swatchOnly" color-picker-inline="colorpicker.inline" color-picker-on-change="colorpicker.onColorChange($event,color)"></color-picker>
-                        </div> -->
+                        </div>
 
 
                     </div>
@@ -73,22 +73,22 @@
                         bs-datepicker>
 
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label class="control-label"><i class="fa fa-clock-o"></i> </label>
                     </br>
                     <input type="text" size="8" class="form-control" ng-model="asideTask.model.from" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
-                </div>
+                </div> -->
                 <div class="form-group">
                     <label class="control-label"><i class="fa fa-calendar"></i> END</label>
                     </br>
                     <input type="text" class="form-control" ng-model="asideTask.model.to" min-date="{{options.fromDate}}" data-date-format="dd/MM/yyyy" start-date="{{options.currentDateValue.toString()}}" data-animation="" data-placement="top-left" start-week="1" placeholder="To"
                         bs-datepicker>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label class="control-label"><i class="fa fa-clock-o"></i> </label>
                     </br>
                     <input type="text" size="8" class="form-control" ng-model="asideTask.model.to" data-time-format="HH:mm" data-minute-step="15" data-animation="" data-placement="top-right" data-autoclose="1" placeholder="Time" bs-timepicker>
-                </div>
+                </div> -->
 
 
             </div>
@@ -189,9 +189,10 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="btn-group-vertical" role="group" aria-label="...">
-                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidDate(asideTask.model.from,asideTask.model.to)" ng-model="button.save" ng-click="taskSave(asideTask,'save');$hide()" bs-checkbox>Save</button>
+                    <button type="button" class="btn btn-default btn-danger" ng-disabled="!isValidDate(asideTask.model.from,asideTask.model.to)"  ng-click="taskSave(asideTask,'save');$hide()" >Save</button>
+                    <button type="button" class="btn btn-default btn-info {{asideTask.model.isTrack?'active':''}}" ng-model="asideTask.model.isTrack" bs-checkbox><i class="fa fa-eye" aria-hidden="true"></i> Track</button>
                     <div confirm-delete-button on-confirm="taskDelete(asideTask);$hide()"></div>
-                    <button type="button" class="btn btn-default" ng-model="button.cancel" ng-if="!asideTask.model.isNew" ng-click="cancel('task');$hide()" bs-checkbox>Cancel</button>
+                    <button type="button" class="btn btn-default" ng-if="!asideTask.model.isDrawing" ng-click="cancel('task');$hide()" >Cancel</button>
 
                 </div>
             </div>
