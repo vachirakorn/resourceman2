@@ -8,7 +8,7 @@
  * Controller of the angularGanttDemoApp
  */
 angular.module('angularGanttDemoApp')
-    .controller('MainCtrl', ['$scope', '$timeout', '$http', '$log', 'ganttUtils', 'GanttObjectModel', 'ganttMouseOffset', 'ganttDebounce', 'moment', '$modal', '$aside', '$alert','$document','$window', function($scope, $timeout, $http, $log, utils, ObjectModel, mouseOffset, debounce, moment, $modal, $aside, $alert,$document,$window) {
+    .controller('MainCtrl', ['$scope', '$timeout', '$http', '$log', 'ganttUtils', 'GanttObjectModel', 'ganttMouseOffset', 'ganttDebounce', 'moment', '$modal', '$aside', '$alert', '$document', '$window', function($scope, $timeout, $http, $log, utils, ObjectModel, mouseOffset, debounce, moment, $modal, $aside, $alert, $document, $window) {
         $scope.taskTemp = {};
         $scope.rowTemp = {};
         $scope.projectTemp = {};
@@ -157,22 +157,25 @@ angular.module('angularGanttDemoApp')
             //console.log('yiq: '+yiq);
             return (yiq >= 128) ? 'black' : 'white';
         };
-
+        
+        $scope.currentPalette = 'palette1';
         $scope.sampleColorsPicker = {
-            palette: ['#FF0000', '#FF4200', '#FF7E00', '#FFD100', '#FDFF00',
-                '#39C3F2', '#2BABDC', '#1E95B5', '#1D7AA5', '#035793',
-                '#24555b', '#3C9198', '#49AFA4', '#67C0A4', '#A5DDB0',
-                '#FAAEA1', '#F57A73', '#E26352', '#D25052', '#6B3630',
-                '#9A2144', '#842344', '#741E3B', '#532F55', '#825393',
-                '#CBCBCB', '#B2B2B2', '#999999', '#808080', '#676767'
+            palette1: ['#ff0000', '#ff4000', '#ff8000', '#ffbf00', '#ffff00',
+                '#ace600', '#73e600', '#39e600', '#00cc00', '#009926',
+                '#66ffb3', '#00ffbf', '#00ffff', '#1ac6ff', '#1a8cff',
+                '#3366ff', '#3333ff', '#6633ff', '#9933ff', '#cc33ff',
+                '#ff00ff', '#ff00bf', '#ff0080', '#ff3399', '#ff66b3',
+                '#ff99cc', '#ffcce6'
+            ],
+            palette2: ['#ff9999', '#ffb399', '#ffcc99', '#ffe699', '#ffff99',
+                '#e6ff99', '#ccff99', '#b3ff99', '#99ff99', '#99ffb3',
+                '#99ffcc', '#99ffe6', '#99ffff', '#99e6ff', '#99ccff',
+                '#99b3ff', '#9999ff', '#b399ff', '#cc99ff', '#e699ff',
+                '#ff99ff', '#ff99e6', '#ff99cc', '#ff99b3'
 
             ],
-            palette2: ['#F6F0ED', '#B0D5E6', '#FBE7E4', '#B5D9D6', '#CEE9E5',
-                '#DFEDD1', '#D5E0AB', '#CADEEB', '#FAE1B5', '#D2C8BE',
-                '#FDF9CB', '#F4E1C3', '#FAF1A4', '#F0F6E8', '#FEE4CB',
-                '#FFE4B8', '#D6E9F8', '#DAE8C5', '#C6DAA7', '#F4F3B0',
-                '#E6EFC0', '#FAE8E4', '#F9E6E0', '#EEDFB6', '#FFEFC2',
-                '#FFEAD7', '#FFEACB', '#FAF7D8', '#FCF8D3', '#CFE9FC'
+            palette3: ['#1a1a1a', '#333333', '#4d4d4d', '#666666', '#808080',
+                '#999999', '#b3b3b3', '#cccccc', '#e6e6e6'
 
             ],
             setTaskColor: function(color) {
@@ -557,7 +560,7 @@ angular.module('angularGanttDemoApp')
 
                             element.bind('click', function(event) {
                                 event.stopPropagation();
-                                $document.scrollToElementAnimated(element,$window.innerHeight/3);
+                                $document.scrollToElementAnimated(element, $window.innerHeight / 3);
                                 logTaskEvent('task-click', directiveScope.task);
                                 $scope.asideTask = directiveScope.task;
 
@@ -593,7 +596,7 @@ angular.module('angularGanttDemoApp')
 
                             element.bind('click', function() {
                                 event.stopPropagation();
-                                $document.scrollToElementAnimated(element,$window.innerHeight/3);
+                                $document.scrollToElementAnimated(element, $window.innerHeight / 3);
                                 logRowEvent('row-label-click', directiveScope.row);
 
                                 if (directiveScope.row.model.height === undefined && $scope.options.view === 'resource') {

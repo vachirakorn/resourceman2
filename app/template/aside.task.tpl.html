@@ -21,29 +21,32 @@
             </div>
             <div class="col-field-wrapper">
                 <div class="form-group" >
-                    <label class="control-label">COLOR</label>
-                    <div ng-hide="nextPalette" class="color-wrapper">
+                    <label class="control-label" >COLOR</label>
+                    <div ng-hide="currentPalette!=='palette1'" class="color-wrapper">
                         <div class="sample-color" style="width:200px;">
-                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette"></div>
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette1 track by $index"></div>
                         </div>
                         <div class="custom-color">
-                          <button type="button" class="btn btn-default btn-next-palette" ng-click="nextPalette=!nextPalette" ><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                          <button type="button" class="btn btn-default btn-next-palette" ng-click="currentPalette='palette2'" ><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
 
                         </div>
-                        <!-- <div class="custom-color">
-                            <color-picker ng-model="color" color-picker-disabled="colorpicker.disabled" color-picker-format="colorpicker.format" color-picker-alpha="colorpicker.alpha" color-picker-swatch="colorpicker.swatch" color-picker-swatch-pos="colorpicker.swatchPos" color-picker-swatch-bootstrap="colorpicker.swatchBootstrap"
-                                color-picker-pos="colorpicker.pos" color-picker-case="colorpicker.case" color-picker-swatch-only="colorpicker.swatchOnly" color-picker-inline="colorpicker.inline" color-picker-on-change="colorpicker.onColorChange($event,color)"></color-picker>
-                        </div> -->
-
-
                     </div>
-                    <div ng-hide="!nextPalette" class="color-wrapper">
+                    <div ng-hide="currentPalette!=='palette2'" class="color-wrapper">
+                        <div class="sample-color" style="width:200px;">
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette2 track by $index"></div>
+                        </div>
+                        <div class="custom-color">
+                          <button type="button" class="btn btn-default btn-next-palette" ng-click="currentPalette='palette3'" ><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+
+                        </div>
+                    </div>
+                    <div ng-hide="currentPalette!=='palette3'" class="color-wrapper">
                       <div class="custom-color">
-                        <button type="button" class="btn btn-default btn-next-palette" ng-click="nextPalette=!nextPalette" ><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                        <button type="button" class="btn btn-default btn-next-palette" ng-click="currentPalette='palette1'" ><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
 
                       </div>
-                        <div class="sample-color" style="width:200px;">
-                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette2"></div>
+                        <div class="sample-color" style="width:160px;">
+                            <div class="color-slot" ng-click="sampleColorsPicker.setTaskColor(sampleColor)" style="background-color:{{sampleColor}}" ng-repeat="sampleColor in sampleColorsPicker.palette3 track by $index"></div>
                         </div>
 
                         <div class="custom-color">
