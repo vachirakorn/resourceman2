@@ -1,14 +1,5 @@
-<<<<<<< HEAD
-
-# angular-gantt [![npm version](http://img.shields.io/npm/v/angular-gantt.svg)](https://npmjs.org/package/angular-gantt) [![build status](http://img.shields.io/travis/angular-gantt/angular-gantt.svg)](https://travis-ci.org/angular-gantt/angular-gantt)
-
-##Gantt chart component for AngularJS
-
-## Demo project
-
-Demo project is a showcase for [angular-gantt](https://github.com/angular-gantt/angular-gantt).
-
-It's generated using [yeoman angular generator](https://github.com/yeoman/generator-angular).
+## resourceman2
+gantt chart for managing workload
 
 ## Development
 
@@ -51,9 +42,4 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-=======
-=======
-# resourceman2
-gantt chart for managing workload
->>>>>>> 44b3938dad0fb4425ddbffc2afb5495008a1d3a3
+
