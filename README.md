@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # angular-gantt [![npm version](http://img.shields.io/npm/v/angular-gantt.svg)](https://npmjs.org/package/angular-gantt) [![build status](http://img.shields.io/travis/angular-gantt/angular-gantt.svg)](https://travis-ci.org/angular-gantt/angular-gantt)
 
@@ -52,3 +53,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 =======
+=======
+# resourceman2
+gantt chart for managing workload
+>>>>>>> 44b3938dad0fb4425ddbffc2afb5495008a1d3a3
